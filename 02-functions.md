@@ -1,4 +1,6 @@
-# Creating a dummy package
+# Functions
+
+## Creating a dummy package
 
 From RStudio (or VSCode) we can create a new package by running `create_package("~/linalg")`. This will create a new folder with the name `linalg`.  Then I run `use_cpp11()` to add the required files to use C++ code within R.
 
@@ -35,7 +37,9 @@ using namespace cpp11;
 }
 ```
 
-This will create a new matrix, which is a problem (i.e., think about the memory usage)
+This will create a new matrix, which is a problem (i.e., think about the memory usage).
+
+Important: Within R, I do not need to create a `main()` function in C++.
 
 In order to export the function, I added the following lines to `linalg-package.R`.
 
