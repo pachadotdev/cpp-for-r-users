@@ -1,4 +1,6 @@
-# R Setup
+# Setup
+
+## R Setup
 
 I installed the R packages `cpp11` and `usethis`.
 
@@ -18,7 +20,7 @@ I run `nano ~/.R/Makevars` from bash and then saved with CTRL+O+ENTER and closed
 
 Now forget about `devtools::install()`. After reopening your editor, every time you use RStudio (or VSCode) you just call `install()`, and the same applies to `usethis::use_*()` and `cpp11::cpp_*()` functions.
 
-# C++ setup
+## C++ setup
 
 Ubuntu and its derived distributions use `gcc` as the default C++ compiler. Macs use `clang` as the default compiler.
 
@@ -47,7 +49,7 @@ I had to install additional packages. This took me a few hours searching on the 
 sudo apt install g++-11 libc++-11-dev libc++abi-11-dev
 ```
 
-# R Setup (part 2)
+## R Setup (part 2)
 
 To be sure that R's `install()` function uses the correct version of `clang` when compiling my codes, I created the `~/.R/Makevars` file. The contents of that file are the following.
 
