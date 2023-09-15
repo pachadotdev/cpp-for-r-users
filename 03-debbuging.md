@@ -1,4 +1,6 @@
-# Debugging the package
+# Debugging
+
+## Debugging the package
 
 In order to access debugging symbols, I created a new `Makevars` file within the `src` folder, and added the following lines.
 
@@ -21,7 +23,7 @@ A good challenge would be to implement the QR decomposition used by the `lm()` f
 
 In any case, it would be extremely hard to beat the performance of the `lm()` function in R, which has some internals written in C, and how computationally robust `lm()` is means another feature that is hard to beat.
 
-# References
+## References
 
 * [Debugging in R with a single command](https://mpadge.github.io/blog/blog012.html)
 * [Debugging an R package with C++](https://blog.davisvaughan.com/posts/2019-04-05-debug-r-package-with-cpp/)
