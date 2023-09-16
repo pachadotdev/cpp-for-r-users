@@ -1,0 +1,282 @@
+
+# Functions (part 2)
+
+## Euclidean distance between two points
+
+This function returns the distance from a reference point in the real
+line to 1,2, …, n points in the real line.
+
+``` cpp
+[[cpp11::register]] doubles pdist_cpp_(double x, doubles ys) {
+  int n = ys.size();
+  writable::doubles out(n);
+  for(int i = 0; i < n; ++i) {
+    out[i] = sqrt(pow(ys[i] - x, 2.0));
+  }
+  return out;
+}
+```
+
+The R equivalent is the following.
+
+``` r
+#' Return the euclidean distance from a value to a vector of values (R)
+#' @param x numeric
+#' @param y numeric vector
+#' @export
+pdist_r <- function(x, ys) {
+  sqrt((x - ys) ^ 2)
+}
+```
+
+I also need to add the corresponding auxiliary function for the
+documentation.
+
+``` r
+#' Return the euclidean distance from a value to a vector of values (C++)
+#' @inheritParams pdist_r
+#' @export
+pdist_cpp <- function(x, ys) {
+  pdist_cpp_(x, ys)
+}
+```
+
+A benchmark of the two functions is the following.
+
+``` r
+# just to make sure I am in the right folder when rendering the qmd file
+setwd("~/github/cpp-for-r-users/ece244")
+
+load_all()
+```
+
+    ℹ Loading ece244
+
+``` r
+x <- runif(1e3) # 1,000,000 elements
+
+# print the first 10 output's coordinates
+head(pdist_cpp(0.5, x))
+```
+
+    [1] 0.4068159 0.2352246 0.1647789 0.4872001 0.1422439 0.2159462
+
+``` r
+head(pdist_r(0.5, x))
+```
+
+    [1] 0.4068159 0.2352246 0.1647789 0.4872001 0.1422439 0.2159462
+
+``` r
+mark(
+  pdist_cpp(0.5, x),
+  pdist_r(0.5, x)
+)
+```
+
+    # A tibble: 2 × 6
+      expression             min   median `itr/sec` mem_alloc `gc/sec`
+      <bch:expr>        <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
+    1 pdist_cpp(0.5, x)  67.23µs   72.8µs    13106.    7.86KB     2.03
+    2 pdist_r(0.5, x)     6.94µs   10.6µs    91448.    7.86KB     9.15
+
+Once again, R wins (for now).
+
+## Average the elements of a vector
+
+This function returns the average (or mean) of the elements of a vector.
+
+``` cpp
+[[cpp11::register]] double mean_cpp_(doubles x) {
+  int n = x.size();
+  double y = 0;
+
+  for(int i = 0; i < n; ++i) {
+    // y += x[i] / n;
+    // replace N divisions with 1 division at the end
+    y += x[i];
+  }
+  
+  // return y;
+    return y / n;
+}
+```
+
+The R equivalent is the following.
+
+``` r
+#' Return the mean of the coordinates of a vector (R)
+#' @param x numeric vector
+#' @export
+mean_r <- function(x) {
+  sum_r(x) / length(x)
+}
+```
+
+I also need to add the corresponding auxiliary function for the
+documentation.
+
+``` r
+#' Return the mean of the coordinates of a vector (C++)
+#' @inheritParams mean_r
+#' @export
+mean_cpp <- function(x) {
+  mean_cpp_(x)
+}
+```
+
+A benchmark of the two functions is the following.
+
+``` r
+# just to make sure I am in the right folder when rendering the qmd file
+setwd("~/github/cpp-for-r-users/ece244")
+
+load_all()
+```
+
+    ℹ Loading ece244
+
+``` r
+x <- runif(1e3) # 1,000,000 elements
+
+mean(x)
+```
+
+    [1] 0.4962489
+
+``` r
+mean_cpp(x)
+```
+
+    [1] 0.4962489
+
+``` r
+mean_r(x)
+```
+
+    [1] 0.4962489
+
+``` r
+mark(
+  mean(x),
+  mean_cpp(x),
+  mean_r(x)
+)
+```
+
+    # A tibble: 3 × 6
+      expression       min   median `itr/sec` mem_alloc `gc/sec`
+      <bch:expr>  <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
+    1 mean(x)        7.7µs   8.21µs   116666.        0B     11.7
+    2 mean_cpp(x)   7.97µs   8.25µs   117172.        0B     11.7
+    3 mean_r(x)    42.73µs  44.12µs    22402.    16.6KB      0  
+
+I got ties. My C++ function is clearly faster than my R function, but is
+marginally slower than R’s `mean()` function.
+
+## Cumulative sum of the elements of a vector
+
+To be able to create writable vectors, I need to append this below the
+namespace declaration (i.e., `using namespace cpp11`).
+
+``` cpp
+namespace writable = cpp11::writable;
+```
+
+This function returns the cumulative sum of the elements of a vector.
+
+``` cpp
+[[cpp11::register]] doubles cumsum_cpp_(doubles x) {
+  int n = x.size();
+  writable::doubles out(n);
+
+  out[0] = x[0];
+  for(int i = 1; i < n; ++i) {
+    out[i] = out[i - 1] + x[i];
+  }
+  return out;
+}
+```
+
+The R equivalent is the following.
+
+``` r
+#' Return the cumulative sum of the coordinates of a vector (R)
+#' @param x numeric vector
+#' @export
+cumsum_r <- function(x) {
+  n <- length(x)
+  out <- numeric(n)
+  out[1] <- x[1]
+  for (i in 2:n) {
+    out[i] <- out[i - 1] + x[i]
+  }
+  out
+}
+```
+
+I also need to add the corresponding auxiliary function for the
+documentation.
+
+``` r
+#' Return the cumulative sum of the coordinates of a vector (C++)
+#' @inheritParams cumsum_r
+#' @export
+cumsum_cpp <- function(x) {
+  cumsum_cpp_(as.double(x))
+}
+```
+
+A benchmark of the two functions is the following.
+
+``` r
+# just to make sure I am in the right folder when rendering the qmd file
+setwd("~/github/cpp-for-r-users/ece244")
+
+load_all()
+```
+
+    ℹ Loading ece244
+
+``` r
+x <- runif(1e3) # 1,000,000 elements
+
+cumsum(1:3)
+```
+
+    [1] 1 3 6
+
+``` r
+cumsum_cpp(1:3)
+```
+
+    [1] 1 3 6
+
+``` r
+cumsum_r(1:3)
+```
+
+    [1] 1 3 6
+
+``` r
+mark(
+    cumsum(x),
+    cumsum_cpp(x),
+    cumsum_r(x)
+)
+```
+
+    # A tibble: 3 × 6
+      expression         min   median `itr/sec` mem_alloc `gc/sec`
+      <bch:expr>    <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
+    1 cumsum(x)       1.93µs   2.08µs   380006.    7.86KB    38.0 
+    2 cumsum_cpp(x)  36.38µs  39.95µs    24141.    7.86KB     4.83
+    3 cumsum_r(x)   113.62µs 117.91µs     8122.    35.9KB     0   
+
+My C++ function is in the middle between R’s `cumsum()` and my R
+function `cumsum_r()`.
+
+## References
+
+- [Get started with
+  cpp11](https://cran.r-project.org/web/packages/cpp11/vignettes/cpp11.html)

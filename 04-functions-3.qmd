@@ -1,0 +1,171 @@
+---
+format: gfm
+editor:
+  markdown:
+    wrap: 80
+---
+
+# Functions (part 3)
+
+## Logical tests
+
+The following function is the C++ implementation of the R function `any`,
+which returns `TRUE` if there is any `TRUE` element in a vector, and `FALSE`
+otherwise.
+
+```cpp
+[[cpp11::register]] bool any_cpp_(logicals x) {
+  int n = x.size();
+
+  for(int i = 0; i < n; ++i) {
+    if (x[i]) {
+      return true;
+    }
+  }
+  return false;
+}
+```
+
+The R equivalent is the following.
+
+```r
+#' Return TRUE if any element in a vector is TRUE (R)
+#' @param x logical vector
+#' @export
+any_r <- function(x) {
+  n <- length(x)
+
+  for (i in 1:n) {
+    if (x[i]) {
+      return(TRUE)
+    }
+  }
+  FALSE
+}
+```
+
+I also need to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return TRUE if any element in a vector is TRUE (C++)
+#' @inheritParams all_r
+#' @export
+any_cpp <- function(x) {
+  any_cpp_(x)
+}
+```
+
+A benchmark of the two functions is the following.
+
+```{r 04-functions-bench2}
+# just to make sure I am in the right folder when rendering the qmd file
+setwd("~/github/cpp-for-r-users/ece244")
+
+load_all()
+
+set.seed(123) # set the seed for reproducibility
+x <- rpois(1e6, lambda = 2) # 1,000,000 elements
+y <- ifelse(x > 2, TRUE, FALSE)
+
+any(y)
+any_cpp(y)
+any_r(y)
+
+mark(
+  any(y),
+  any_cpp(y),
+  any_r(y)
+)
+```
+
+## Logical tests (cont'd)
+
+The next function is an alternative C++ implementation of the R function
+`which`, that returns the indexes of the `TRUE` elements in a vector.
+
+```cpp
+[[cpp11::register]] integers which_cpp_(cpp11::function pred, doubles x) {
+  int n = x.size();
+  writable::doubles res;
+  int j = 0;
+
+  for(int i = 0; i < n; ++i) {
+    if (pred(x[i])) {
+      ++j;
+      res.push_back(i + 1);
+    }
+  }
+
+  if (j == 0) {
+    return doubles(0);
+  } else {
+    return res;
+  }
+}
+```
+
+The R equivalent is the following.
+
+```r
+#' Return the index of the first TRUE element in a vector (R)
+#' @param x predicate function
+#' @param y vector of values
+#' @export
+which_r <- function(x, y) {
+  n <- length(y)
+  res <- c()
+  j <- 0
+
+  for (i in 1:n) {
+    if (x(y[i])) {
+      j <- j + 1
+      res[j] <- i
+    }
+  }
+
+  if (j == 0) {
+    return(0)
+  } else {
+    return(res)
+  }
+}
+```
+
+I also need to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the index of the first TRUE element in a vector (C++)
+#' @inheritParams which_r
+#' @export
+which_cpp <- function(x, y) {
+  which_cpp_(x, y)
+}
+```
+
+A benchmark of the two functions is the following.
+
+```{r 04-functions-bench3}
+# just to make sure I am in the right folder when rendering the qmd file
+setwd("~/github/cpp-for-r-users/ece244")
+
+load_all()
+
+set.seed(123) # set the seed for reproducibility
+x <- rpois(1e6, lambda = 2) # 1,000,000 elements
+
+head(which(x > 2))
+head(which_cpp(function(x) x > 2, x))
+head(which_r(function(x) x > 2, x))
+
+mark(
+  which(x > 2),
+  which_cpp(function(x) x > 2, x),
+  which_r(function(x) x > 2, x)
+)
+```
+
+Clearly, there is no advantage over `which()` in this case.
+
+## References
+
+* [Get started with cpp11](https://cran.r-project.org/web/packages/cpp11/vignettes/cpp11.html)
