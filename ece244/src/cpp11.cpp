@@ -61,17 +61,57 @@ extern "C" SEXP _ece244_which_cpp_(SEXP pred, SEXP x) {
     return cpp11::as_sexp(which_cpp_(cpp11::as_cpp<cpp11::decay_t<cpp11::function>>(pred), cpp11::as_cpp<cpp11::decay_t<doubles>>(x)));
   END_CPP11
 }
+// code.cpp
+bool all_cpp_4_(cpp11::logicals x);
+extern "C" SEXP _ece244_all_cpp_4_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(all_cpp_4_(cpp11::as_cpp<cpp11::decay_t<cpp11::logicals>>(x)));
+  END_CPP11
+}
+// code.cpp
+bool all_cpp_3_(cpp11::logicals x);
+extern "C" SEXP _ece244_all_cpp_3_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(all_cpp_3_(cpp11::as_cpp<cpp11::decay_t<cpp11::logicals>>(x)));
+  END_CPP11
+}
+// code.cpp
+bool all_cpp_2_(cpp11::logicals x);
+extern "C" SEXP _ece244_all_cpp_2_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(all_cpp_2_(cpp11::as_cpp<cpp11::decay_t<cpp11::logicals>>(x)));
+  END_CPP11
+}
+// code.cpp
+bool all_cpp_1_(cpp11::logicals x);
+extern "C" SEXP _ece244_all_cpp_1_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(all_cpp_1_(cpp11::as_cpp<cpp11::decay_t<cpp11::logicals>>(x)));
+  END_CPP11
+}
+// code.cpp
+cpp11::doubles cumprod_cpp_(cpp11::doubles x);
+extern "C" SEXP _ece244_cumprod_cpp_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(cumprod_cpp_(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x)));
+  END_CPP11
+}
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_ece244_any_cpp_",    (DL_FUNC) &_ece244_any_cpp_,    1},
-    {"_ece244_cumsum_cpp_", (DL_FUNC) &_ece244_cumsum_cpp_, 1},
-    {"_ece244_mean_cpp_",   (DL_FUNC) &_ece244_mean_cpp_,   1},
-    {"_ece244_one_cpp_",    (DL_FUNC) &_ece244_one_cpp_,    0},
-    {"_ece244_pdist_cpp_",  (DL_FUNC) &_ece244_pdist_cpp_,  2},
-    {"_ece244_sign_cpp_",   (DL_FUNC) &_ece244_sign_cpp_,   1},
-    {"_ece244_sum_cpp_",    (DL_FUNC) &_ece244_sum_cpp_,    1},
-    {"_ece244_which_cpp_",  (DL_FUNC) &_ece244_which_cpp_,  2},
+    {"_ece244_all_cpp_1_",   (DL_FUNC) &_ece244_all_cpp_1_,   1},
+    {"_ece244_all_cpp_2_",   (DL_FUNC) &_ece244_all_cpp_2_,   1},
+    {"_ece244_all_cpp_3_",   (DL_FUNC) &_ece244_all_cpp_3_,   1},
+    {"_ece244_all_cpp_4_",   (DL_FUNC) &_ece244_all_cpp_4_,   1},
+    {"_ece244_any_cpp_",     (DL_FUNC) &_ece244_any_cpp_,     1},
+    {"_ece244_cumprod_cpp_", (DL_FUNC) &_ece244_cumprod_cpp_, 1},
+    {"_ece244_cumsum_cpp_",  (DL_FUNC) &_ece244_cumsum_cpp_,  1},
+    {"_ece244_mean_cpp_",    (DL_FUNC) &_ece244_mean_cpp_,    1},
+    {"_ece244_one_cpp_",     (DL_FUNC) &_ece244_one_cpp_,     0},
+    {"_ece244_pdist_cpp_",   (DL_FUNC) &_ece244_pdist_cpp_,   2},
+    {"_ece244_sign_cpp_",    (DL_FUNC) &_ece244_sign_cpp_,    1},
+    {"_ece244_sum_cpp_",     (DL_FUNC) &_ece244_sum_cpp_,     1},
+    {"_ece244_which_cpp_",   (DL_FUNC) &_ece244_which_cpp_,   2},
     {NULL, NULL, 0}
 };
 }

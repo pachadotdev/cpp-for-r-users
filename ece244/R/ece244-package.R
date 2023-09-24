@@ -55,3 +55,8 @@ any_cpp <- function(x) {
 which_cpp <- function(x,y) {
   which_cpp_(x, as.double(y))
 }
+
+#' @export
+cumprod_cpp <- function(x) {
+  cumprod_cpp_(as.double(x))
+}

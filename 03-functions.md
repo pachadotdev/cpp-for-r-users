@@ -59,13 +59,13 @@ x <- runif(1e3) # 1,000,000 elements
 head(pdist_cpp(0.5, x))
 ```
 
-    [1] 0.4068159 0.2352246 0.1647789 0.4872001 0.1422439 0.2159462
+    [1] 0.2052315 0.1916225 0.4295720 0.1031363 0.3465739 0.1249707
 
 ``` r
 head(pdist_r(0.5, x))
 ```
 
-    [1] 0.4068159 0.2352246 0.1647789 0.4872001 0.1422439 0.2159462
+    [1] 0.2052315 0.1916225 0.4295720 0.1031363 0.3465739 0.1249707
 
 ``` r
 mark(
@@ -77,8 +77,8 @@ mark(
     # A tibble: 2 × 6
       expression             min   median `itr/sec` mem_alloc `gc/sec`
       <bch:expr>        <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    1 pdist_cpp(0.5, x)  67.23µs   72.8µs    13106.    7.86KB     2.03
-    2 pdist_r(0.5, x)     6.94µs   10.6µs    91448.    7.86KB     9.15
+    1 pdist_cpp(0.5, x)     66µs  73.17µs    11723.    7.86KB      0  
+    2 pdist_r(0.5, x)      6.9µs   7.36µs   129506.    7.86KB     13.0
 
 Once again, R wins (for now).
 
@@ -142,19 +142,19 @@ x <- runif(1e3) # 1,000,000 elements
 mean(x)
 ```
 
-    [1] 0.4962489
+    [1] 0.51873
 
 ``` r
 mean_cpp(x)
 ```
 
-    [1] 0.4962489
+    [1] 0.51873
 
 ``` r
 mean_r(x)
 ```
 
-    [1] 0.4962489
+    [1] 0.51873
 
 ``` r
 mark(
@@ -167,9 +167,9 @@ mark(
     # A tibble: 3 × 6
       expression       min   median `itr/sec` mem_alloc `gc/sec`
       <bch:expr>  <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    1 mean(x)        7.7µs   8.21µs   116666.        0B     11.7
-    2 mean_cpp(x)   7.97µs   8.25µs   117172.        0B     11.7
-    3 mean_r(x)    42.73µs  44.12µs    22402.    16.6KB      0  
+    1 mean(x)       7.71µs    8.1µs   118985.        0B     11.9
+    2 mean_cpp(x)   7.99µs   8.25µs   115648.        0B     11.6
+    3 mean_r(x)    42.73µs  44.36µs    20284.    16.6KB      0  
 
 I got ties. My C++ function is clearly faster than my R function, but is
 marginally slower than R’s `mean()` function.
@@ -269,9 +269,9 @@ mark(
     # A tibble: 3 × 6
       expression         min   median `itr/sec` mem_alloc `gc/sec`
       <bch:expr>    <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    1 cumsum(x)       1.93µs   2.08µs   380006.    7.86KB    38.0 
-    2 cumsum_cpp(x)  36.38µs  39.95µs    24141.    7.86KB     4.83
-    3 cumsum_r(x)   113.62µs 117.91µs     8122.    35.9KB     0   
+    1 cumsum(x)        1.9µs   2.07µs   403521.    7.86KB    40.4 
+    2 cumsum_cpp(x)   36.9µs  39.67µs    23808.    7.86KB     4.76
+    3 cumsum_r(x)    114.1µs 118.26µs     8291.    35.9KB     0   
 
 My C++ function is in the middle between R’s `cumsum()` and my R
 function `cumsum_r()`.

@@ -89,3 +89,45 @@ namespace writable = cpp11::writable;
     return res;
   }
 }
+
+[[cpp11::register]] bool all_cpp_4_(cpp11::logicals x) {
+  return std::all_of(x.begin(), x.end(), [](bool x) { return x; });
+}
+
+[[cpp11::register]] bool all_cpp_3_(cpp11::logicals x) {
+  for (bool i : x) {
+    if (i == false) {
+      return false;
+    }
+  }
+  return true;
+}
+
+[[cpp11::register]] bool all_cpp_2_(cpp11::logicals x) {
+  for (int i = 0; i < x.size(); ++i) {
+    if (x[i] == false) {
+      return false;
+    }
+  }
+  return true;
+}
+
+[[cpp11::register]] bool all_cpp_1_(cpp11::logicals x) {
+  int n = x.size();
+  for(int i = 0; i < n; ++i) {
+    if (x[i] == false) {
+      return false;
+    }
+  }
+  return true;
+}
+
+[[cpp11::register]] cpp11::doubles cumprod_cpp_(cpp11::doubles x) {
+  int n = x.size();
+  writable::doubles out(n);
+  out[0] = x[0];
+  for(int i = 1; i < n; ++i) {
+    out[i] = out[i - 1] * x[i];
+  }
+  return out;
+}

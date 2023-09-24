@@ -31,3 +31,23 @@ any_cpp_ <- function(x) {
 which_cpp_ <- function(pred, x) {
   .Call(`_ece244_which_cpp_`, pred, x)
 }
+
+all_cpp_4_ <- function(x) {
+  .Call(`_ece244_all_cpp_4_`, x)
+}
+
+all_cpp_3_ <- function(x) {
+  .Call(`_ece244_all_cpp_3_`, x)
+}
+
+all_cpp_2_ <- function(x) {
+  .Call(`_ece244_all_cpp_2_`, x)
+}
+
+all_cpp_1_ <- function(x) {
+  .Call(`_ece244_all_cpp_1_`, x)
+}
+
+cumprod_cpp_ <- function(x) {
+  .Call(`_ece244_cumprod_cpp_`, x)
+}
