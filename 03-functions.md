@@ -59,26 +59,26 @@ x <- runif(1e3) # 1,000,000 elements
 head(pdist_cpp(0.5, x))
 ```
 
-    [1] 0.2052315 0.1916225 0.4295720 0.1031363 0.3465739 0.1249707
+    [1] 0.2596499 0.1343768 0.3267811 0.1528822 0.1045801 0.1595420
 
 ``` r
 head(pdist_r(0.5, x))
 ```
 
-    [1] 0.2052315 0.1916225 0.4295720 0.1031363 0.3465739 0.1249707
+    [1] 0.2596499 0.1343768 0.3267811 0.1528822 0.1045801 0.1595420
 
 ``` r
 mark(
-  pdist_cpp(0.5, x),
-  pdist_r(0.5, x)
+    pdist_cpp(0.5, x),
+    pdist_r(0.5, x)
 )
 ```
 
     # A tibble: 2 × 6
       expression             min   median `itr/sec` mem_alloc `gc/sec`
       <bch:expr>        <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    1 pdist_cpp(0.5, x)     66µs  73.17µs    11723.    7.86KB      0  
-    2 pdist_r(0.5, x)      6.9µs   7.36µs   129506.    7.86KB     13.0
+    1 pdist_cpp(0.5, x)     75µs  81.59µs    10566.    7.86KB      0  
+    2 pdist_r(0.5, x)     6.92µs   7.32µs   120273.    7.86KB     12.0
 
 Once again, R wins (for now).
 
@@ -142,34 +142,34 @@ x <- runif(1e3) # 1,000,000 elements
 mean(x)
 ```
 
-    [1] 0.51873
+    [1] 0.5038513
 
 ``` r
 mean_cpp(x)
 ```
 
-    [1] 0.51873
+    [1] 0.5038513
 
 ``` r
 mean_r(x)
 ```
 
-    [1] 0.51873
+    [1] 0.5038513
 
 ``` r
 mark(
-  mean(x),
-  mean_cpp(x),
-  mean_r(x)
+    mean(x),
+    mean_cpp(x),
+    mean_r(x)
 )
 ```
 
     # A tibble: 3 × 6
       expression       min   median `itr/sec` mem_alloc `gc/sec`
       <bch:expr>  <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    1 mean(x)       7.71µs    8.1µs   118985.        0B     11.9
-    2 mean_cpp(x)   7.99µs   8.25µs   115648.        0B     11.6
-    3 mean_r(x)    42.73µs  44.36µs    20284.    16.6KB      0  
+    1 mean(x)        7.6µs    8.1µs   116772.        0B    11.7 
+    2 mean_cpp(x)   12.6µs   12.8µs    74769.        0B     7.48
+    3 mean_r(x)     47.4µs     49µs    19497.    16.6KB     0   
 
 I got ties. My C++ function is clearly faster than my R function, but is
 marginally slower than R’s `mean()` function.
@@ -269,9 +269,9 @@ mark(
     # A tibble: 3 × 6
       expression         min   median `itr/sec` mem_alloc `gc/sec`
       <bch:expr>    <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    1 cumsum(x)        1.9µs   2.07µs   403521.    7.86KB    40.4 
-    2 cumsum_cpp(x)   36.9µs  39.67µs    23808.    7.86KB     4.76
-    3 cumsum_r(x)    114.1µs 118.26µs     8291.    35.9KB     0   
+    1 cumsum(x)       1.91µs   2.06µs   374466.    7.86KB    37.5 
+    2 cumsum_cpp(x)  45.94µs  53.32µs    18658.    7.86KB     4.08
+    3 cumsum_r(x)    113.8µs 118.45µs     7561.    35.9KB     0   
 
 My C++ function is in the middle between R’s `cumsum()` and my R
 function `cumsum_r()`.
@@ -279,4 +279,4 @@ function `cumsum_r()`.
 ## References
 
 - [Get started with
-  cpp11](https://cran.r-project.org/web/packages/cpp11/vignettes/cpp11.html)
+  cpp11](https://cpp11.r-lib.org/articles/cpp11.html#intro)

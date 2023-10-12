@@ -169,9 +169,9 @@ sum_cpp(x)
 sum_r(x)
 
 mark(
-  sum(x),
-  sum_cpp(x),
-  sum_r(x)
+    sum(x),
+    sum_cpp(x),
+    sum_r(x)
 )
 ```
 
@@ -194,4 +194,4 @@ install()
 
 ## References 
 
-* [Get started with cpp11](https://cran.r-project.org/web/packages/cpp11/vignettes/cpp11.html)
+* [Get started with cpp11](https://cpp11.r-lib.org/articles/cpp11.html#intro)

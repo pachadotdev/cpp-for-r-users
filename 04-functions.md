@@ -85,18 +85,18 @@ any_r(y)
 
 ``` r
 mark(
-  any(y),
-  any_cpp(y),
-  any_r(y)
+    any(y),
+    any_cpp(y),
+    any_r(y)
 )
 ```
 
     # A tibble: 3 × 6
       expression      min   median `itr/sec` mem_alloc `gc/sec`
       <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    1 any(y)     301.98ns    317ns  2853532.        0B      0  
-    2 any_cpp(y)   1.94µs   2.04µs   450634.        0B      0  
-    3 any_r(y)     1.13µs   1.21µs   765903.    24.8KB     76.6
+    1 any(y)     313.86ns 327.01ns  2750715.        0B      0  
+    2 any_cpp(y)   2.02µs   2.15µs   415748.        0B      0  
+    3 any_r(y)     1.17µs   1.52µs   555172.    24.8KB     55.5
 
 ## Logical tests (cont’d)
 
@@ -197,9 +197,9 @@ head(which_r(function(x) x > 2, x))
 
 ``` r
 mark(
-  which(x > 2),
-  which_cpp(function(x) x > 2, x),
-  which_r(function(x) x > 2, x)
+    which(x > 2),
+    which_cpp(function(x) x > 2, x),
+    which_r(function(x) x > 2, x)
 )
 ```
 
@@ -209,13 +209,13 @@ mark(
     # A tibble: 3 × 6
       expression                           min   median `itr/sec` mem_alloc `gc/sec`
       <bch:expr>                      <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    1 which(x > 2)                     10.32ms  13.36ms    77.7      8.86MB    37.9 
-    2 which_cpp(function(x) x > 2, x)    1.37s    1.37s     0.731   15.63MB     7.31
-    3 which_r(function(x) x > 2, x)   886.78ms 886.78ms     1.13    26.74MB     9.02
+    1 which(x > 2)                      10.3ms  13.38ms    76.9      8.86MB    37.5 
+    2 which_cpp(function(x) x > 2, x)    1.61s    1.61s     0.621   15.63MB     6.21
+    3 which_r(function(x) x > 2, x)   916.24ms 916.24ms     1.09    26.74MB     7.64
 
 Clearly, there is no advantage over `which()` in this case.
 
 ## References
 
 - [Get started with
-  cpp11](https://cran.r-project.org/web/packages/cpp11/vignettes/cpp11.html)
+  cpp11](https://cpp11.r-lib.org/articles/cpp11.html#intro)

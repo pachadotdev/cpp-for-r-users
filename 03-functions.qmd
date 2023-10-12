@@ -61,8 +61,8 @@ head(pdist_cpp(0.5, x))
 head(pdist_r(0.5, x))
 
 mark(
-  pdist_cpp(0.5, x),
-  pdist_r(0.5, x)
+    pdist_cpp(0.5, x),
+    pdist_r(0.5, x)
 )
 ```
 
@@ -125,9 +125,9 @@ mean_cpp(x)
 mean_r(x)
 
 mark(
-  mean(x),
-  mean_cpp(x),
-  mean_r(x)
+    mean(x),
+    mean_cpp(x),
+    mean_r(x)
 )
 ```
 
@@ -212,4 +212,4 @@ My C++ function is in the middle between R's `cumsum()` and my R function
 
 ## References
 
-* [Get started with cpp11](https://cran.r-project.org/web/packages/cpp11/vignettes/cpp11.html)
+* [Get started with cpp11](https://cpp11.r-lib.org/articles/cpp11.html#intro)

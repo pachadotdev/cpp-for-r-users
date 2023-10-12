@@ -156,7 +156,7 @@ load_all()
 ```
 
     ℹ Loading ece244
-    ℹ 7 functions decorated with [[cpp11::register]]
+    ℹ 14 functions decorated with [[cpp11::register]]
 
     ✔ generated file 'cpp11.R'
 
@@ -168,11 +168,11 @@ load_all()
     * installing *source* package ‘ece244’ ...
     ** using staged installation
     ** libs
-    using C++ compiler: ‘Ubuntu clang version 11.1.0-6’
+    using C++ compiler: ‘g++ (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0’
     using C++11
-    clang++-11 -stdlib=libc++ -std=gnu++11 -I"/usr/share/R/include" -DNDEBUG  -I'/home/pacha/R/x86_64-pc-linux-gnu-library/4.3/cpp11/include'     -fpic  -Wall -O0 -pedantic -UNDEBUG -Wall -pedantic -g -O0 -c cpp11.cpp -o cpp11.o
-    clang++-11 -stdlib=libc++ -std=gnu++11 -shared -L/usr/lib/R/lib -Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -flto=auto -Wl,-z,relro -o ece244.so code.o cpp11.o -L/usr/lib/R/lib -lR
-    installing to /tmp/Rtmpo7aIWI/devtools_install_4d7076026e2a/00LOCK-ece244/00new/ece244/libs
+    g++ -std=gnu++11 -I"/usr/share/R/include" -DNDEBUG  -I'/home/pacha/R/x86_64-pc-linux-gnu-library/4.3/cpp11/include'     -fpic  -g -O2 -ffile-prefix-map=/build/r-base-MHXHhT/r-base-4.3.1=. -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2  -UNDEBUG -Wall -pedantic -g -O0 -c cpp11.cpp -o cpp11.o
+    g++ -std=gnu++11 -shared -L/usr/lib/R/lib -Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -flto=auto -Wl,-z,relro -o ece244.so code.o cpp11.o -L/usr/lib/R/lib -lR
+    installing to /tmp/RtmpKmDWqJ/devtools_install_6abc7e999706/00LOCK-ece244/00new/ece244/libs
     ** checking absolute paths in shared objects and dynamic libraries
     * DONE (ece244)
 
@@ -184,34 +184,34 @@ x <- runif(1e3) # 1,000,000 elements
 sum(x)
 ```
 
-    [1] 489.8301
+    [1] 480.949
 
 ``` r
 sum_cpp(x)
 ```
 
-    [1] 489.8301
+    [1] 480.949
 
 ``` r
 sum_r(x)
 ```
 
-    [1] 489.8301
+    [1] 480.949
 
 ``` r
 mark(
-  sum(x),
-  sum_cpp(x),
-  sum_r(x)
+    sum(x),
+    sum_cpp(x),
+    sum_r(x)
 )
 ```
 
     # A tibble: 3 × 6
       expression      min   median `itr/sec` mem_alloc `gc/sec`
       <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-    1 sum(x)       2.01µs   2.03µs   479853.        0B     0   
-    2 sum_cpp(x)   7.98µs   8.24µs   117181.        0B     0   
-    3 sum_r(x)    41.79µs  43.45µs    21004.    18.7KB     2.10
+    1 sum(x)       2.02µs   2.04µs   478778.        0B     0   
+    2 sum_cpp(x)  12.63µs  12.95µs    71029.        0B     7.10
+    3 sum_r(x)    41.85µs  43.03µs    22762.    18.7KB     0   
 
 This is not computationally efficient (i.e., see the median time, which
 is median execution time for repeated runs), which is fine because the
@@ -233,4 +233,4 @@ install()
 ## References
 
 - [Get started with
-  cpp11](https://cran.r-project.org/web/packages/cpp11/vignettes/cpp11.html)
+  cpp11](https://cpp11.r-lib.org/articles/cpp11.html#intro)

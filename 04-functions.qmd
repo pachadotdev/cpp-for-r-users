@@ -72,9 +72,9 @@ any_cpp(y)
 any_r(y)
 
 mark(
-  any(y),
-  any_cpp(y),
-  any_r(y)
+    any(y),
+    any_cpp(y),
+    any_r(y)
 )
 ```
 
@@ -158,9 +158,9 @@ head(which_cpp(function(x) x > 2, x))
 head(which_r(function(x) x > 2, x))
 
 mark(
-  which(x > 2),
-  which_cpp(function(x) x > 2, x),
-  which_r(function(x) x > 2, x)
+    which(x > 2),
+    which_cpp(function(x) x > 2, x),
+    which_r(function(x) x > 2, x)
 )
 ```
 
@@ -168,4 +168,4 @@ Clearly, there is no advantage over `which()` in this case.
 
 ## References
 
-* [Get started with cpp11](https://cran.r-project.org/web/packages/cpp11/vignettes/cpp11.html)
+* [Get started with cpp11](https://cpp11.r-lib.org/articles/cpp11.html#intro)

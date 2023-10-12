@@ -51,3 +51,11 @@ all_cpp_1_ <- function(x) {
 cumprod_cpp_ <- function(x) {
   .Call(`_ece244_cumprod_cpp_`, x)
 }
+
+cumprod_cpp_2_ <- function(x) {
+  .Call(`_ece244_cumprod_cpp_2_`, x)
+}
+
+cummin_cpp_ <- function(x) {
+  .Call(`_ece244_cummin_cpp_`, x)
+}
