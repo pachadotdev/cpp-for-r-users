@@ -276,13 +276,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="good-practice" class="level2">
 <h2 class="anchored" data-anchor-id="good-practice">Good Practice</h2>
 <p>It is good practice to use a license for your code. I use the MIT license for all my code. You can add a license by running <code>use_mit_license("Your Name")</code>.</p>
-<p>It is also good practise to use <code>use_build_ignore()</code> to ignore files that are not needed for the package. For example, I do not need the license in the package installation, so I run <code>use_build_ignore("LICENSE")</code>.</p>
+<p>It is also good practise to use <code>use_build_ignore()</code> to ignore files that are not needed for the package. For example, I do not need the docs folder in the package installation, so I run <code>use_build_ignore("docs")</code>.</p>
 <p>My <code>.Rbuilignore</code>, because I render the notes, includes the following lines.</p>
 <pre><code>^snippets$
 ^docs$
 ^\.vscode$
+^\.quarto$
 ^ece244\.Rproj$
-^LICENSE$
 ^LICENSE\.md$
 .*qmd
 ^_quarto\.yml$</code></pre>

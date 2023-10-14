@@ -18,6 +18,8 @@ The following function returns the sum of the elements of a vector.
 }
 ```
 
+The R equivalent is the following.
+
 ```r
 #' Return the sum of the coordinates of a vector (R)
 #' @param x numeric vector
