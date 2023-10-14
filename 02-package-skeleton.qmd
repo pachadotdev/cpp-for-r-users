@@ -1,0 +1,138 @@
+# Package Skeleton
+
+## Creating a Dummy Package
+
+From RStudio (or VSCode) we can create a new package by running 
+`create_package("~/github/cpp-for-r-users/ece244")`. This will create a new
+folder with the name `ece244`.  Then I run `use_cpp11()` to add the required
+files to use C++ code within R.
+
+I run `use_r("ece244-package")` to create a new R script file named 
+`ece244-package.R` within the `R` folder under `ece244`, and added the following
+code to it.
+
+```r
+#' @useDynLib ece244, .registration = TRUE
+NULL
+```
+
+## Print a Number
+
+The `usethis` skeleton also created the file `src/code.cpp` for me. I added a
+simple function to print the number 1.
+
+```cpp
+#include <cpp11.hpp>
+
+using namespace cpp11;
+    
+[[cpp11::register]] int one_cpp_() {
+    return 1;
+}
+```
+
+Within R, I do not need to create a `main()` function in C++.
+
+The R version of this is.
+
+```r
+#' Return 1 (R)
+#' @export
+one_r <- function() {
+    1L
+}
+```
+
+In order to export the function, I added the following lines to
+`ece244-package.R`, this allows me to document the function and eventually
+define default values for the arguments.
+
+```r
+#' Return 1 (C++)
+#' @export
+one_cpp <- function() {
+  one_cpp_()
+}
+```
+
+## Number's Sign
+
+A more complicated function is one that returns the sign of a number.
+
+```cpp
+[[cpp11::register]] int sign_cpp_(double x) {
+    if (x > 0) {
+        return 1;
+    } else if (x == 0) {
+        return 0;
+    } else {
+        return -1;
+    }
+}
+```
+
+```r
+#' Return the sign of a number (R)
+#' @param x integer
+#' @export
+sign_r <- function(x) {
+  if (x > 0) {
+    1
+  } else if (x == 0) {
+    0
+  } else {
+    -1
+  }
+}
+```
+
+I also have to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the sign of a number (C++)
+#' @inheritParams sum_r
+#' @export
+sign_cpp <- function(x) {
+  sign_cpp_(x)
+}
+```
+
+## Installing the Package
+
+To document and install this as a proper R package that I can call with
+`library(ece244)`, I need to add a few more things.
+
+```r
+cpp_register()
+document()
+install()
+```
+
+You need to run the previous lines every time you make a change to the C++ code
+and want to install the package again.
+
+## Good Practice
+
+It is good practice to use a license for your code. I use the MIT license for
+all my code. You can add a license by running `use_mit_license("Your Name")`.
+
+It is also good practise to use `use_build_ignore()` to ignore files that are
+not needed for the package. For example, I do not need the docs folder in the
+package installation, so I run `use_build_ignore("docs")`.
+
+My `.Rbuilignore`, because I render the notes, includes the following lines.
+
+```
+^snippets$
+^docs$
+^\.vscode$
+^\.quarto$
+^ece244\.Rproj$
+^LICENSE\.md$
+.*qmd
+^_quarto\.yml$
+```
+
+## References 
+
+* [Get started with cpp11](https://cpp11.r-lib.org/articles/cpp11.html#intro)

@@ -1,0 +1,23 @@
+project:
+  type: book
+  output-dir: docs
+
+execute: 
+  echo: false
+  warning: false
+  message: false
+  
+book:
+  title: "C++ for R Users"
+  chapters:
+    - index.qmd
+    - 01-setup.qmd
+    - 02-package-skeleton.qmd
+    - 03-statistical-functions.qmd
+    - 04-logical-functions.qmd
+    - 05-rolling-functions.qmd
+    
+format:
+  html:
+    theme: [cosmo, custom.scss]
+    number-sections: false

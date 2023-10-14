@@ -1,0 +1,8 @@
+^snippets$
+^docs$
+^\.vscode$
+^\.quarto$
+^ece244\.Rproj$
+^LICENSE\.md$
+.*qmd
+^_quarto\.yml$

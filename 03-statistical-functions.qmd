@@ -1,0 +1,195 @@
+# Statistical functions
+
+## Sum of Vector Elements (`sum()`)
+
+I know R provides the `sum()` function, but I want to create this function
+just for the sake of the example.
+
+The following function returns the sum of the elements of a vector.
+
+```cpp
+[[cpp11::register]] double sum_cpp_(doubles x) {
+  int n = x.size();
+  double total = 0;
+  for(int i = 0; i < n; ++i) {
+    total += x[i];
+  }
+  return total;
+}
+```
+
+```r
+#' Return the sum of the coordinates of a vector (R)
+#' @param x numeric vector
+#' @export
+sum_r <- function(x) {
+  total <- 0
+  for (i in seq_along(x)) {
+    total <- total + x[i]
+  }
+  total
+}
+```
+
+I also have to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the sum of the coordinates of a vector (C++)
+#' @inheritParams sum_r
+#' @export
+sum_cpp <- function(x) {
+  sum_cpp_(x)
+}
+```
+
+To test, I run the following lines in the R console.
+
+```{r 03-sum-test}
+cpp_register()
+load_all()
+
+set.seed(123) # for reproducibility
+x <- runif(1e3) # 1,000,000 elements
+
+sum(x)
+sum_cpp(x)
+sum_r(x)
+
+mark(
+    sum(x),
+    sum_cpp(x),
+    sum_r(x)
+)
+```
+
+This is not computationally efficient (i.e., see the median time, which is
+median execution time for repeated runs), which is fine because the purpose of
+this example is to show how to create a package with C++ code. The code
+optimizations were deactived in the `Makevars` file and the improvements to the
+code will come later.
+
+## Average the elements of a vector
+
+This function returns the average (or mean) of the elements of a vector.
+
+```cpp
+[[cpp11::register]] double mean_cpp_(doubles x) {
+  int n = x.size();
+  double y = 0;
+
+  for(int i = 0; i < n; ++i) {
+    // y += x[i] / n;
+    // replace N divisions with 1 division at the end
+    y += x[i];
+  }
+  
+  // return y;
+    return y / n;
+}
+```
+
+The R equivalent is the following.
+
+```r
+#' Return the mean of the coordinates of a vector (R)
+#' @param x numeric vector
+#' @export
+mean_r <- function(x) {
+  sum_r(x) / length(x)
+}
+```
+
+I also need to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the mean of the coordinates of a vector (C++)
+#' @inheritParams mean_r
+#' @export
+mean_cpp <- function(x) {
+  mean_cpp_(x)
+}
+```
+
+A benchmark of the two functions is the following.
+
+```{r 03-functions-bench2}
+load_all()
+
+x <- runif(1e3) # 1,000,000 elements
+
+mean(x)
+mean_cpp(x)
+mean_r(x)
+
+mark(
+    mean(x),
+    mean_cpp(x),
+    mean_r(x)
+)
+```
+
+I got ties. My C++ function is clearly faster than my R function, but is
+marginally slower than R's `mean()` function.
+
+# Root Mean Square Error (`rmse()`)
+
+The next function returns the measure of the differences between the observed
+values or an estimator (x1, x2, ..., xn) and the true value (x0).
+
+```cpp
+[[cpp11::register]] double rmse_cpp_(doubles x, double x0) {
+  int n = x.size();
+  double out;
+  for(int i = 0; i < n; ++i) {
+    out += pow(x[i] - x0, 2.0);
+  }
+  return sqrt(out / n);
+}
+```
+
+The R equivalent is the following.
+
+```r
+#' Return the root mean square error (R)
+#' @param x numeric vector
+#' @param x0 numeric value
+#' @export
+rmse_r <- function(x, x0) {
+  sqrt(sum((x - x0)^2) / length(x))
+}
+```
+
+I also need to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the root mean square error (C++)
+#' @inheritParams rmse_r
+#' @export
+rmse_cpp <- function(x, x0) {
+  rmse_cpp_(x, x0)
+}
+```
+
+A benchmark of the two functions is the following.
+
+```{r 03-functions-bench}
+load_all()
+
+x <- runif(1e3) # 1,000,000 elements
+x0 <- 0.3 # some arbitrary value
+
+# print the first 10 output's coordinates
+rmse_cpp(x, x0)
+rmse_r(x, x0)
+
+mark(
+    rmse_cpp(x, x0),
+    rmse_r(x, x0)
+)
+```
+
+Once again, R wins (for now).
+
+## References
+
+* [Get started with cpp11](https://cpp11.r-lib.org/articles/cpp11.html#intro)
