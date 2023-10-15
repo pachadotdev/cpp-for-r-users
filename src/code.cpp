@@ -1,5 +1,4 @@
-#include <cpp11.hpp>
-
+#include "cpp11.hpp"
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
@@ -38,6 +37,27 @@ namespace writable = cpp11::writable;
   return y / n;
 }
 
+[[cpp11::register]] double var_cpp_(doubles x) {
+  int n = x.size();
+
+  if (n < 2) {
+    return NA_REAL;
+  }
+
+  double ex = 0;
+  for (int i = 0; i < n; ++i) {
+    ex += x[i];
+  }
+  ex /= n;
+
+  double out = 0;
+  for (int i = 0; i < n; ++i) {
+    out += pow(x[i] - ex, 2);
+  }
+
+  return out / (n - 1);
+}
+
 [[cpp11::register]] double rmse_cpp_(doubles x, double x0) {
   int n = x.size();
   double out;
@@ -69,7 +89,7 @@ namespace writable = cpp11::writable;
   return false;
 }
 
-[[cpp11::register]] doubles which_cpp_(cpp11::function pred, doubles x) {
+[[cpp11::register]] doubles which_cpp_(function pred, doubles x) {
   int n = x.size();
   writable::doubles res;
   int j = 0;
@@ -88,11 +108,11 @@ namespace writable = cpp11::writable;
   }
 }
 
-[[cpp11::register]] bool all_cpp_4_(cpp11::logicals x) {
+[[cpp11::register]] bool all_cpp_4_(logicals x) {
   return std::all_of(x.begin(), x.end(), [](bool x) { return x; });
 }
 
-[[cpp11::register]] bool all_cpp_3_(cpp11::logicals x) {
+[[cpp11::register]] bool all_cpp_3_(logicals x) {
   for (bool i : x) {
     if (i == false) {
       return false;
@@ -101,7 +121,7 @@ namespace writable = cpp11::writable;
   return true;
 }
 
-[[cpp11::register]] bool all_cpp_2_(cpp11::logicals x) {
+[[cpp11::register]] bool all_cpp_2_(logicals x) {
   for (int i = 0; i < x.size(); ++i) {
     if (x[i] == false) {
       return false;
@@ -110,7 +130,7 @@ namespace writable = cpp11::writable;
   return true;
 }
 
-[[cpp11::register]] bool all_cpp_1_(cpp11::logicals x) {
+[[cpp11::register]] bool all_cpp_1_(logicals x) {
   int n = x.size();
   for (int i = 0; i < n; ++i) {
     if (x[i] == false) {
@@ -175,4 +195,151 @@ namespace writable = cpp11::writable;
     out[i] = std::max(x1, x2);
   }
   return out;
+}
+
+[[cpp11::register]] doubles diff1_cpp_(doubles x) {
+  int n = x.size();
+  writable::doubles out(n - 1);
+
+  for (int i = 0; i < n - 1; ++i) {
+    out[i] = x[i + 1] - x[i];
+  }
+  return out;
+}
+
+[[cpp11::register]] doubles diff_cpp_(doubles x, int lag = 1) {
+  int n = x.size();
+  writable::doubles out(n - lag);
+
+  for (int i = 0; i < n - lag; ++i) {
+    out[i] = x[i + lag] - x[i];
+  }
+  return out;
+}
+
+[[cpp11::register]] doubles range_cpp_(doubles x) {
+  int n = x.size();
+  double x1 = x[0], x2 = x[0];
+
+  for (int i = 1; i < n; ++i) {
+    x1 = std::min(x1, x[i]);
+    x2 = std::max(x2, x[i]);
+  }
+
+  writable::doubles out(2);
+  out[0] = x1;
+  out[1] = x2;
+
+  return out;
+}
+
+[[cpp11::register]] double sum2_cpp_(doubles x, bool na_rm = false) {
+  int n = x.size();
+  double total = 0;
+  for (int i = 0; i < n; ++i) {
+    if (na_rm && ISNAN(x[i])) {
+      continue;
+    } else {
+      total += x[i];
+    }
+  }
+  return total;
+}
+
+[[cpp11::register]] double mean2_cpp_(doubles x, bool na_rm = false) {
+  int n = x.size();
+
+  int m = 0;
+  for (int i = 0; i < n; ++i) {
+    if (na_rm && ISNAN(x[i])) {
+      continue;
+    } else {
+      ++m;
+    }
+  }
+
+  if (m == 0) {
+    return NA_REAL;
+  }
+
+  double y = 0;
+  for (int i = 0; i < n; ++i) {
+    if (na_rm && ISNAN(x[i])) {
+      continue;
+    } else {
+      y += x[i];
+    }
+  }
+
+  return y / m;
+}
+
+[[cpp11::register]] double var2_cpp_(doubles x, bool na_rm = false) {
+  int n = x.size();
+
+  if (n < 2) {
+    return NA_REAL;
+  }
+
+  int m = 0;
+  for (int i = 0; i < n; ++i) {
+    if (na_rm && ISNAN(x[i])) {
+      continue;
+    } else {
+      ++m;
+    }
+  }
+
+  if (m < 2) {
+    return NA_REAL;
+  }
+
+  double ex = 0;
+  for (int i = 0; i < n; ++i) {
+    if (na_rm && ISNAN(x[i])) {
+      continue;
+    } else {
+      ex += x[i];
+    }
+  }
+  ex /= m;
+
+  double out = 0;
+  for (int i = 0; i < n; ++i) {
+    if (na_rm && ISNAN(x[i])) {
+      continue;
+    } else {
+      out += pow(x[i] - ex, 2);
+    }
+  }
+
+  return out / (m - 1);
+}
+
+[[cpp11::register]] double rmse2_cpp_(doubles x, double x0,
+                                      bool na_rm = false) {
+  int n = x.size();
+
+  int m = 0;
+  for (int i = 0; i < n; ++i) {
+    if (na_rm && ISNAN(x[i])) {
+      continue;
+    } else {
+      ++m;
+    }
+  }
+
+  if (m == 0) {
+    return NA_REAL;
+  }
+
+  double out;
+  for (int i = 0; i < n; ++i) {
+    if (na_rm && ISNAN(x[i])) {
+      continue;
+    } else {
+      out += pow(x[i] - x0, 2.0);
+    }
+  }
+  return sqrt(out / m);
 }

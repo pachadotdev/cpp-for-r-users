@@ -34,6 +34,13 @@ extern "C" SEXP _ece244_mean_cpp_(SEXP x) {
   END_CPP11
 }
 // code.cpp
+double var_cpp_(doubles x);
+extern "C" SEXP _ece244_var_cpp_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(var_cpp_(cpp11::as_cpp<cpp11::decay_t<doubles>>(x)));
+  END_CPP11
+}
+// code.cpp
 double rmse_cpp_(doubles x, double x0);
 extern "C" SEXP _ece244_rmse_cpp_(SEXP x, SEXP x0) {
   BEGIN_CPP11
@@ -55,38 +62,38 @@ extern "C" SEXP _ece244_any_cpp_(SEXP x) {
   END_CPP11
 }
 // code.cpp
-doubles which_cpp_(cpp11::function pred, doubles x);
+doubles which_cpp_(function pred, doubles x);
 extern "C" SEXP _ece244_which_cpp_(SEXP pred, SEXP x) {
   BEGIN_CPP11
-    return cpp11::as_sexp(which_cpp_(cpp11::as_cpp<cpp11::decay_t<cpp11::function>>(pred), cpp11::as_cpp<cpp11::decay_t<doubles>>(x)));
+    return cpp11::as_sexp(which_cpp_(cpp11::as_cpp<cpp11::decay_t<function>>(pred), cpp11::as_cpp<cpp11::decay_t<doubles>>(x)));
   END_CPP11
 }
 // code.cpp
-bool all_cpp_4_(cpp11::logicals x);
+bool all_cpp_4_(logicals x);
 extern "C" SEXP _ece244_all_cpp_4_(SEXP x) {
   BEGIN_CPP11
-    return cpp11::as_sexp(all_cpp_4_(cpp11::as_cpp<cpp11::decay_t<cpp11::logicals>>(x)));
+    return cpp11::as_sexp(all_cpp_4_(cpp11::as_cpp<cpp11::decay_t<logicals>>(x)));
   END_CPP11
 }
 // code.cpp
-bool all_cpp_3_(cpp11::logicals x);
+bool all_cpp_3_(logicals x);
 extern "C" SEXP _ece244_all_cpp_3_(SEXP x) {
   BEGIN_CPP11
-    return cpp11::as_sexp(all_cpp_3_(cpp11::as_cpp<cpp11::decay_t<cpp11::logicals>>(x)));
+    return cpp11::as_sexp(all_cpp_3_(cpp11::as_cpp<cpp11::decay_t<logicals>>(x)));
   END_CPP11
 }
 // code.cpp
-bool all_cpp_2_(cpp11::logicals x);
+bool all_cpp_2_(logicals x);
 extern "C" SEXP _ece244_all_cpp_2_(SEXP x) {
   BEGIN_CPP11
-    return cpp11::as_sexp(all_cpp_2_(cpp11::as_cpp<cpp11::decay_t<cpp11::logicals>>(x)));
+    return cpp11::as_sexp(all_cpp_2_(cpp11::as_cpp<cpp11::decay_t<logicals>>(x)));
   END_CPP11
 }
 // code.cpp
-bool all_cpp_1_(cpp11::logicals x);
+bool all_cpp_1_(logicals x);
 extern "C" SEXP _ece244_all_cpp_1_(SEXP x) {
   BEGIN_CPP11
-    return cpp11::as_sexp(all_cpp_1_(cpp11::as_cpp<cpp11::decay_t<cpp11::logicals>>(x)));
+    return cpp11::as_sexp(all_cpp_1_(cpp11::as_cpp<cpp11::decay_t<logicals>>(x)));
   END_CPP11
 }
 // code.cpp
@@ -117,6 +124,55 @@ extern "C" SEXP _ece244_cummax_cpp_(SEXP x) {
     return cpp11::as_sexp(cummax_cpp_(cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(x)));
   END_CPP11
 }
+// code.cpp
+doubles diff1_cpp_(doubles x);
+extern "C" SEXP _ece244_diff1_cpp_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(diff1_cpp_(cpp11::as_cpp<cpp11::decay_t<doubles>>(x)));
+  END_CPP11
+}
+// code.cpp
+doubles diff_cpp_(doubles x, int lag);
+extern "C" SEXP _ece244_diff_cpp_(SEXP x, SEXP lag) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(diff_cpp_(cpp11::as_cpp<cpp11::decay_t<doubles>>(x), cpp11::as_cpp<cpp11::decay_t<int>>(lag)));
+  END_CPP11
+}
+// code.cpp
+doubles range_cpp_(doubles x);
+extern "C" SEXP _ece244_range_cpp_(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(range_cpp_(cpp11::as_cpp<cpp11::decay_t<doubles>>(x)));
+  END_CPP11
+}
+// code.cpp
+double sum2_cpp_(doubles x, bool na_rm);
+extern "C" SEXP _ece244_sum2_cpp_(SEXP x, SEXP na_rm) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(sum2_cpp_(cpp11::as_cpp<cpp11::decay_t<doubles>>(x), cpp11::as_cpp<cpp11::decay_t<bool>>(na_rm)));
+  END_CPP11
+}
+// code.cpp
+double mean2_cpp_(doubles x, bool na_rm);
+extern "C" SEXP _ece244_mean2_cpp_(SEXP x, SEXP na_rm) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(mean2_cpp_(cpp11::as_cpp<cpp11::decay_t<doubles>>(x), cpp11::as_cpp<cpp11::decay_t<bool>>(na_rm)));
+  END_CPP11
+}
+// code.cpp
+double var2_cpp_(doubles x, bool na_rm);
+extern "C" SEXP _ece244_var2_cpp_(SEXP x, SEXP na_rm) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(var2_cpp_(cpp11::as_cpp<cpp11::decay_t<doubles>>(x), cpp11::as_cpp<cpp11::decay_t<bool>>(na_rm)));
+  END_CPP11
+}
+// code.cpp
+double rmse2_cpp_(doubles x, double x0, bool na_rm);
+extern "C" SEXP _ece244_rmse2_cpp_(SEXP x, SEXP x0, SEXP na_rm) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(rmse2_cpp_(cpp11::as_cpp<cpp11::decay_t<doubles>>(x), cpp11::as_cpp<cpp11::decay_t<double>>(x0), cpp11::as_cpp<cpp11::decay_t<bool>>(na_rm)));
+  END_CPP11
+}
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
@@ -130,11 +186,19 @@ static const R_CallMethodDef CallEntries[] = {
     {"_ece244_cumprod_cpp_",   (DL_FUNC) &_ece244_cumprod_cpp_,   1},
     {"_ece244_cumprod_cpp_2_", (DL_FUNC) &_ece244_cumprod_cpp_2_, 1},
     {"_ece244_cumsum_cpp_",    (DL_FUNC) &_ece244_cumsum_cpp_,    1},
+    {"_ece244_diff1_cpp_",     (DL_FUNC) &_ece244_diff1_cpp_,     1},
+    {"_ece244_diff_cpp_",      (DL_FUNC) &_ece244_diff_cpp_,      2},
+    {"_ece244_mean2_cpp_",     (DL_FUNC) &_ece244_mean2_cpp_,     2},
     {"_ece244_mean_cpp_",      (DL_FUNC) &_ece244_mean_cpp_,      1},
     {"_ece244_one_cpp_",       (DL_FUNC) &_ece244_one_cpp_,       0},
+    {"_ece244_range_cpp_",     (DL_FUNC) &_ece244_range_cpp_,     1},
+    {"_ece244_rmse2_cpp_",     (DL_FUNC) &_ece244_rmse2_cpp_,     3},
     {"_ece244_rmse_cpp_",      (DL_FUNC) &_ece244_rmse_cpp_,      2},
     {"_ece244_sign_cpp_",      (DL_FUNC) &_ece244_sign_cpp_,      1},
+    {"_ece244_sum2_cpp_",      (DL_FUNC) &_ece244_sum2_cpp_,      2},
     {"_ece244_sum_cpp_",       (DL_FUNC) &_ece244_sum_cpp_,       1},
+    {"_ece244_var2_cpp_",      (DL_FUNC) &_ece244_var2_cpp_,      2},
+    {"_ece244_var_cpp_",       (DL_FUNC) &_ece244_var_cpp_,       1},
     {"_ece244_which_cpp_",     (DL_FUNC) &_ece244_which_cpp_,     2},
     {NULL, NULL, 0}
 };

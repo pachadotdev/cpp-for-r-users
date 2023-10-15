@@ -16,8 +16,9 @@ book:
     - 03-statistical-functions.qmd
     - 04-logical-functions.qmd
     - 05-rolling-functions.qmd
+    - 06-statistical-functions-2.qmd
     
 format:
   html:
-    theme: [cosmo, custom.scss]
+    theme: [cosmo]
     number-sections: false

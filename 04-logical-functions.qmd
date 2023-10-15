@@ -1,5 +1,12 @@
 # Logical Functions
 
+```{r 04-setup}
+#| label: setup
+#| echo: false
+#| message: false
+load_all()
+```
+
 ## Are Some Values True? (`any()`)
 
 `any()` returns `TRUE` if there is any `TRUE` element in a vector, and `FALSE`
@@ -50,9 +57,7 @@ any_cpp <- function(x) {
 Benchmark.
 
 ```{r 04-functions-bench2}
-load_all()
-
-set.seed(123) # set the seed for reproducibility
+set.seed(123) # for reproducibility
 x <- rpois(1e6, lambda = 2) # 1,000,000 elements
 y <- ifelse(x > 2, TRUE, FALSE)
 
@@ -61,9 +66,9 @@ any_cpp(y)
 any_r(y)
 
 mark(
-    any(y),
-    any_cpp(y),
-    any_r(y)
+  any(y),
+  any_cpp(y),
+  any_r(y)
 )
 ```
 
@@ -73,7 +78,7 @@ mark(
 my C++ implementation.
 
 ```cpp
-[[cpp11::register]] integers which_cpp_(cpp11::function pred, doubles x) {
+[[cpp11::register]] integers which_cpp_(function pred, doubles x) {
   int n = x.size();
   writable::doubles res;
   int j = 0;
@@ -134,9 +139,7 @@ which_cpp <- function(x, y) {
 A benchmark of the two functions is the following.
 
 ```{r 04-functions-bench3}
-load_all()
-
-set.seed(123) # set the seed for reproducibility
+set.seed(123) # for reproducibility
 x <- rpois(1e6, lambda = 2) # 1,000,000 elements
 
 head(which(x > 2))
@@ -144,9 +147,9 @@ head(which_cpp(function(x) x > 2, x))
 head(which_r(function(x) x > 2, x))
 
 mark(
-    which(x > 2),
-    which_cpp(function(x) x > 2, x),
-    which_r(function(x) x > 2, x)
+  which(x > 2),
+  which_cpp(function(x) x > 2, x),
+  which_r(function(x) x > 2, x)
 )
 ```
 
@@ -165,7 +168,7 @@ vector of logicals and returns a single logical value after the boolean result
 of a loop over the length of the vector.
 
 ```cpp
-[[cpp11::register]] bool all_cpp_1_(cpp11::logicals x) {
+[[cpp11::register]] bool all_cpp_1_(logicals x) {
   int n = x.size();
   for(int i = 0; i < n; ++i) {
     if (x[i] == false) {
@@ -179,7 +182,7 @@ of a loop over the length of the vector.
 I can save lines by not defining `n`.
 
 ```cpp
-[[cpp11::register]] bool all_cpp_2_(cpp11::logicals x) {
+[[cpp11::register]] bool all_cpp_2_(logicals x) {
   for (int i = 0; i < x.size(); ++i) {
     if (x[i] == false) {
       return false;
@@ -192,7 +195,7 @@ I can save lines by not defining `n`.
 It is also possible to directly define a logical variable `i` inside the loop.
 
 ```cpp
-[[cpp11::register]] bool all_cpp_3_(cpp11::logicals x) {
+[[cpp11::register]] bool all_cpp_3_(logicals x) {
   for (bool i : x) {
     if (i == false) {
       return false;
@@ -205,7 +208,7 @@ It is also possible to directly define a logical variable `i` inside the loop.
 Using `std::all_of()` I can do the same thing in one line.
 
 ```cpp
-[[cpp11::register]] bool all_cpp_4_(cpp11::logicals x) {
+[[cpp11::register]] bool all_cpp_4_(logicals x) {
   return std::all_of(x.begin(), x.end(), [](bool x) { return x; });
 }
 ```
@@ -220,9 +223,7 @@ auxiliary functions.
 Now I need to test if the functions work as expected.
 
 ```{r 05-functions-all-correctness}
-load_all()
-
-set.seed(123) # set the seed for reproducibility
+set.seed(123) # for reproducibility
 x <- rpois(1e6, lambda = 2) # 1,000,000 elements
 
 all(x > 2)
@@ -243,11 +244,11 @@ Now I can care about the benchmarking.
 
 ```{r 05-functions-all-benchmark}
 mark(
-    all(x > 2),
-    all_cpp_1_(x > 2),
-    all_cpp_2_(x > 2),
-    all_cpp_3_(x > 2),
-    all_cpp_4_(x > 2)
+  all(x > 2),
+  all_cpp_1_(x > 2),
+  all_cpp_2_(x > 2),
+  all_cpp_3_(x > 2),
+  all_cpp_4_(x > 2)
 )
 ```
 

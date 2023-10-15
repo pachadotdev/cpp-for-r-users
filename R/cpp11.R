@@ -16,6 +16,10 @@ mean_cpp_ <- function(x) {
   .Call(`_ece244_mean_cpp_`, x)
 }
 
+var_cpp_ <- function(x) {
+  .Call(`_ece244_var_cpp_`, x)
+}
+
 rmse_cpp_ <- function(x, x0) {
   .Call(`_ece244_rmse_cpp_`, x, x0)
 }
@@ -62,4 +66,32 @@ cummin_cpp_ <- function(x) {
 
 cummax_cpp_ <- function(x) {
   .Call(`_ece244_cummax_cpp_`, x)
+}
+
+diff1_cpp_ <- function(x) {
+  .Call(`_ece244_diff1_cpp_`, x)
+}
+
+diff_cpp_ <- function(x, lag) {
+  .Call(`_ece244_diff_cpp_`, x, lag)
+}
+
+range_cpp_ <- function(x) {
+  .Call(`_ece244_range_cpp_`, x)
+}
+
+sum2_cpp_ <- function(x, na_rm) {
+  .Call(`_ece244_sum2_cpp_`, x, na_rm)
+}
+
+mean2_cpp_ <- function(x, na_rm) {
+  .Call(`_ece244_mean2_cpp_`, x, na_rm)
+}
+
+var2_cpp_ <- function(x, na_rm) {
+  .Call(`_ece244_var2_cpp_`, x, na_rm)
+}
+
+rmse2_cpp_ <- function(x, x0, na_rm) {
+  .Call(`_ece244_rmse2_cpp_`, x, x0, na_rm)
 }

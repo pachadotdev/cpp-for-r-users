@@ -1,5 +1,24 @@
 # Rolling functions
 
+```{r 05-setup}
+#| label: setup
+#| echo: false
+#| message: false
+load_all()
+```
+
+## Required packages
+
+Needed to visualize and simplify showing the results.
+
+```{r 05-packages}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(patchwork)
+```
+
 ## Cumulative sum (`cumsum()`)
 
 To be able to create writable vectors, I need to append this below the namespace
@@ -55,18 +74,17 @@ cumsum_cpp <- function(x) {
 A benchmark of the two functions is the following.
 
 ```{r 05-cumsum-bench}
-load_all()
-
-x <- runif(1e3) # 1,000,000 elements
+set.seed(123) # for reproducibility
+x <- rpois(1e6, lambda = 2) # 1,000,000 elements
 
 cumsum(1:3)
 cumsum_cpp(1:3)
 cumsum_r(1:3)
 
 mark(
-    cumsum(x),
-    cumsum_cpp(x),
-    cumsum_r(x)
+  cumsum(x),
+  cumsum_cpp(x),
+  cumsum_r(x)
 )
 ```
 
@@ -77,7 +95,7 @@ My C++ function is in the middle between R's `cumsum()` and my R function
 
 In R we can use `cumprod()` to compute the cumulative product of a vector.
 
-```{r 05-functions-cumprod}
+```{r 05-cumprod}
 cumprod(1:5)
 ```
 
@@ -97,9 +115,7 @@ The C++ implementation can use the shortcuts from the previous part.
 
 Test correctness.
 
-```{r 05-functions-cumprod-correctness, error = T}
-load_all()
-
+```{r 05-cumprod-correctness, error = T}
 cumprod(1:5)
 cumprod_cpp_(1:5)
 ```
@@ -117,9 +133,7 @@ cumprod_cpp <- function(x) {
 
 Now I can test the correctness of the function again.
 
-```{r 05-functions-cumprod-correctness2}
-load_all()
-
+```{r 05-cumprod-correctness2}
 cumprod(1:5)
 cumprod_cpp(1:5)
 ```
@@ -127,12 +141,9 @@ cumprod_cpp(1:5)
 Benchmark.
 
 ```{r 05-functions-cumprod-benchmark}
-set.seed(123) # set the seed for reproducibility
-x <- rpois(1e6, lambda = 2) # 1,000,000 elements
-
 mark(
-    cumprod(x),
-    cumprod_cpp(x)
+  cumprod(x),
+  cumprod_cpp(x)
 )
 ```
 
@@ -142,7 +153,7 @@ One remedial solution is not to define the length of the vector and add one
 coordinate on each step.
 
 ```cpp
-[[cpp11::register]] cpp11::doubles cumprod_cpp_2_(cpp11::doubles x) {
+[[cpp11::register]] doubles cumprod_cpp_2_(doubles x) {
   int n = x.size();
   writable::doubles out;
   out.push_back(x[0]);
@@ -155,32 +166,23 @@ coordinate on each step.
 
 Benchmark.
 
-```{r 05-functions-cumprod-benchmark2}
-load_all()
-
-set.seed(123) # set the seed for reproducibility
-x <- rpois(1e6, lambda = 2) # 1,000,000 elements
-
-library(ggplot2)
-library(dplyr)
-library(tidyr)
-
+```{r 05-cumprod-benchmark2}
 results <- mark(
-    cumprod(x),
-    cumprod_cpp(x),
-    cumprod_cpp_(as.double(x)),
-    cumprod_cpp_2_(as.double(x))
+  cumprod(x),
+  cumprod_cpp(x),
+  cumprod_cpp_(as.double(x)),
+  cumprod_cpp_2_(as.double(x))
 )
 
 results %>%
-    unnest(c(time, mem_alloc, gc)) %>%
-    select(expression, time, mem_alloc, gc) %>%
-    filter(gc == "none") %>%
-    ggplot(aes(x = mem_alloc, y = time, color = expression)) +
-    geom_point() +
-    scale_color_viridis_d() +
-    geom_smooth(method = "lm", se = F, colour = "grey50") +
-    theme_minimal()
+  unnest(c(time, mem_alloc, gc)) %>%
+  select(expression, time, mem_alloc, gc) %>%
+  filter(gc == "none") %>%
+  ggplot(aes(x = mem_alloc, y = time, color = expression)) +
+  geom_point() +
+  scale_color_viridis_d() +
+  geom_smooth(method = "lm", se = F, colour = "grey50") +
+  theme_minimal()
 ```
 
 `cumprod_cpp_2_` is faster than `cumprod_cpp_` but still slower than base R, and
@@ -190,7 +192,7 @@ it uses more memory than any of the compared function calls.
 
 Let's look at this example from R's documentation.
 
-```{r 05-functions-cummin}
+```{r 05-cummin}
 c(3:1, 2:0, 4:2)
 
 cummin(c(3:1, 2:0, 4:2))
@@ -207,7 +209,7 @@ memory.
 The C++ implementation can use the learning from the previous parts.
 
 ```cpp
-[[cpp11::register]] cpp11::doubles cummin_cpp_(cpp11::doubles x) {
+[[cpp11::register]] doubles cummin_cpp_(doubles x) {
   int n = x.size();
   writable::doubles out(n);
 
@@ -227,40 +229,59 @@ The C++ implementation can use the learning from the previous parts.
 }
 ```
 
+I also have to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the cumulative minimum of the coordinates of a vector (C++)
+#' @param x numeric vector
+#' @export
+cummin_cpp <- function(x) {
+  cummin_cpp_(as.double(x))
+}
+```
+
 Test correctness and benchmark.
 
-```{r 05-functions-cummin-correctness}
-load_all()
-
+```{r 05-cummin-correctness}
 cummin(c(3:1, 2:0, 4:2))
-cummin_cpp_(as.double(c(3:1, 2:0, 4:2)))
+cummin_cpp(c(3:1, 2:0, 4:2))
 
 # create random vectors
-set.seed(123) # set the seed for reproducibility
-x1 <- as.double(rpois(1e6, lambda = 2))
-x2 <- as.double(rpois(10e6, lambda = 2))
-x3 <- as.double(rpois(20e6, lambda = 2))
-
-results <- purrr::map(
-    list(x1, x2, x3),
-    ~ mark(
-        cummin(.x),
-        cummin_cpp_(.x)
-    ) %>%
-        mutate(n = length(.x))
+set.seed(123) # for reproducibility
+bigx <- list(
+  as.double(rpois(2e6, lambda = 2)),
+  as.double(rpois(4e6, lambda = 2)),
+  as.double(rpois(8e6, lambda = 2)),
+  as.double(rpois(16e6, lambda = 2)),
+  as.double(rpois(32e6, lambda = 2)),
+  as.double(rpois(64e6, lambda = 2))
 )
 
-results %>%
-    bind_rows() %>%
-    unnest(c(time, mem_alloc, gc, n)) %>%
-    select(expression, time, mem_alloc, gc, n) %>%
-    filter(gc == "none") %>%
-    mutate(expr = paste(expression, n, sep = " N: ")) %>%
-    ggplot(aes(x = mem_alloc, y = time, color = expr)) +
-    geom_point() +
-    scale_color_viridis_d() +
-    geom_smooth(aes(color = expression), method = "lm", se = F) +
-    theme_minimal()
+results <- map(
+  bigx,
+  ~ mark(
+    cummin(.x),
+    cummin_cpp(.x)
+  ) %>%
+    mutate(n = length(.x))
+)
+
+d <- results %>%
+  bind_rows() %>%
+  unnest(c(time, mem_alloc, gc, n)) %>%
+  select(expression, time, mem_alloc, gc, n)
+
+g1 <- ggplot(d, aes(x = n, y = time, color = expression)) +
+  geom_jitter(width = 0.01, height = 0.01) +
+  scale_color_viridis_d() +
+  theme_minimal()
+
+g2 <- ggplot(d, aes(x = n, y = mem_alloc, color = expression)) +
+  geom_jitter(width = 0.01, height = 0.01) +
+  scale_color_viridis_d() +
+  theme_minimal()
+
+g1 / g2
 ```
 
 ## Cumulative maximum (`cummax()`)
@@ -268,7 +289,7 @@ results %>%
 Analogous to the previous part.
 
 ```cpp
-[[cpp11::register]] cpp11::doubles cummax_cpp_(cpp11::doubles x) {
+[[cpp11::register]] doubles cummax_cpp_(doubles x) {
   int n = x.size();
   writable::doubles out(n);
 
@@ -288,40 +309,240 @@ Analogous to the previous part.
 }
 ```
 
+I also have to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the cumulative maximum of the coordinates of a vector (C++)
+#' @param x numeric vector
+#' @export
+cummax_cpp <- function(x) {
+  cummax_cpp_(as.double(x))
+}
+```
+
 Test correctness and benchmark.
 
-```{r 05-functions-cummax-correctness}
-load_all()
-
+```{r 05-cummax-correctness}
 cummax(c(3:1, 2:0, 4:2))
-cummax_cpp_(as.double(c(3:1, 2:0, 4:2)))
+cummax_cpp(c(3:1, 2:0, 4:2))
 
-# create random vectors
-set.seed(123) # set the seed for reproducibility
-x1 <- as.double(rpois(1e6, lambda = 2))
-x2 <- as.double(rpois(10e6, lambda = 2))
-x3 <- as.double(rpois(20e6, lambda = 2))
-
-results <- purrr::map(
-    list(x1, x2, x3),
-    ~ mark(
-        cummax(.x),
-        cummax_cpp_(.x)
-    ) %>%
-        mutate(n = length(.x))
+results <- map(
+  bigx,
+  ~ mark(
+    cummax(.x),
+    cummax_cpp(.x)
+  ) %>%
+    mutate(n = length(.x))
 )
 
-results %>%
-    bind_rows() %>%
-    unnest(c(time, mem_alloc, gc, n)) %>%
-    select(expression, time, mem_alloc, gc, n) %>%
-    filter(gc == "none") %>%
-    mutate(expr = paste(expression, n, sep = " N: ")) %>%
-    ggplot(aes(x = mem_alloc, y = time, color = expr)) +
-    geom_point() +
-    scale_color_viridis_d() +
-    geom_smooth(aes(color = expression), method = "lm", se = F) +
-    theme_minimal()
+d <- results %>%
+  bind_rows() %>%
+  unnest(c(time, mem_alloc, gc, n)) %>%
+  select(expression, time, mem_alloc, gc, n)
+
+g1 <- ggplot(d, aes(x = n, y = time, color = expression)) +
+  geom_jitter(width = 0.01, height = 0.01) +
+  scale_color_viridis_d() +
+  theme_minimal()
+
+g2 <- ggplot(d, aes(x = n, y = mem_alloc, color = expression)) +
+  geom_jitter(width = 0.01, height = 0.01) +
+  scale_color_viridis_d() +
+  theme_minimal()
+
+g1 / g2
+```
+
+## Lagged Differences (`diff()`)
+
+### First order
+
+A simple example in R is.
+
+```{r 05-diff1}
+set.seed(123) # for reproducibility
+x <- rpois(10, lambda = 2)
+x
+
+diff(x, 1)
+```
+
+The C++ implementation is the following.
+
+```cpp
+[[cpp11::register]] doubles diff1_cpp_(doubles x) {
+  int n = x.size();
+  writable::doubles out(n - 1);
+
+  for (int i = 0; i < n - 1; ++i) {
+    out[i] = x[i + 1] - x[i];
+  }
+  return out;
+}
+```
+
+I also have to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the first order lagged differences of the coordinates of a vector (C++)
+#' @param x numeric vector
+#' @export
+diff1_cpp <- function(x) {
+  diff1_cpp_(as.double(x))
+}
+```
+
+Test correctness.
+
+```{r 05-diff1-correctness}
+diff(x, 1)
+diff1_cpp(x)
+```
+
+### N-th order
+
+A simple example in R is.
+
+```{r 05-diffn}
+diff(x, 2)
+```
+
+The C++ implementation is the following.
+
+```cpp
+[[cpp11::register]] doubles diff_cpp_(doubles x, int lag = 1) {
+  int n = x.size();
+  writable::doubles out(n - lag);
+
+  for (int i = 0; i < n - lag; ++i) {
+    out[i] = x[i + lag] - x[i];
+  }
+  return out;
+}
+```
+
+I also have to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the n-th order lagged differences of the coordinates of a vector (C++)
+#' @param x numeric vector
+#' @export
+diff_cpp <- function(x, lag = 1) {
+  diff_cpp_(as.double(x), as.integer(lag))
+}
+```
+
+Test correctness.
+
+```{r 05-diffn-correctness}
+diff(x, 2)
+diff_cpp(x, 2)
+```
+
+Benchmark.
+
+```{r 05-diffn-benchmark}
+results <- map(
+  bigx,
+  ~ mark(
+    diff(.x, 2),
+    diff_cpp(.x, 2)
+  ) %>%
+    mutate(n = length(.x))
+)
+
+d <- results %>%
+  bind_rows() %>%
+  unnest(c(time, mem_alloc, gc, n)) %>%
+  select(expression, time, mem_alloc, gc, n)
+
+g1 <- ggplot(d, aes(x = n, y = time, color = expression)) +
+  geom_jitter(width = 0.01, height = 0.01) +
+  scale_color_viridis_d() +
+  theme_minimal()
+
+g2 <- ggplot(d, aes(x = n, y = mem_alloc, color = expression)) +
+  geom_jitter(width = 0.01, height = 0.01) +
+  scale_color_viridis_d() +
+  theme_minimal()
+
+g1 / g2
+```
+
+## Range of values (`range()`)
+
+A simple example in R is.
+
+```{r 05-range}
+range(x)
+```
+
+The C++ implementation is the following.
+
+```cpp
+[[cpp11::register]] doubles range_cpp_(doubles x) {
+  int n = x.size();
+  double x1 = x[0], x2 = x[0];
+
+  for (int i = 1; i < n; ++i) {
+    x1 = std::min(x1, x[i]);
+    x2 = std::max(x2, x[i]);
+  }
+
+  writable::doubles out(2);
+  out[0] = x1;
+  out[1] = x2;
+
+  return out;
+}
+```
+
+I also have to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the n-th order lagged differences of the coordinates of a vector (C++)
+#' @param x numeric vector
+#' @export
+range_cpp <- function(x) {
+  range_cpp_(as.double(x))
+}
+```
+
+Test correctness.
+
+```{r 05-range-correctness}
+range(x)
+range_cpp(x)
+```
+
+Benchmark.
+
+```{r 05-range-benchmark}
+results <- map(
+  bigx,
+  ~ mark(
+    range(.x),
+    range_cpp(.x)
+  ) %>%
+    mutate(n = length(.x))
+)
+
+d <- results %>%
+  bind_rows() %>%
+  unnest(c(time, mem_alloc, gc, n)) %>%
+  select(expression, time, mem_alloc, gc, n)
+
+g1 <- ggplot(d, aes(x = n, y = time, color = expression)) +
+  geom_jitter(width = 0.01, height = 0.01) +
+  scale_color_viridis_d() +
+  theme_minimal()
+
+g2 <- ggplot(d, aes(x = n, y = mem_alloc, color = expression)) +
+  geom_jitter(width = 0.01, height = 0.01) +
+  scale_color_viridis_d() +
+  theme_minimal()
+
+g1 / g2
 ```
 
 ## References

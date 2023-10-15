@@ -18,17 +18,14 @@ NULL
 
 ## Print a Number
 
-The `usethis` skeleton also created the file `src/code.cpp` for me. I added a
-simple function to print the number 1.
+The `usethis` skeleton also created the file `src/code.cpp` for me. I modified it
+and added a simple function to print the number 1.
 
 ```cpp
-#include <cpp11.hpp>
-
+#include "cpp11.hpp"
 using namespace cpp11;
     
-[[cpp11::register]] int one_cpp_() {
-    return 1;
-}
+[[cpp11::register]] int one_cpp_() { return 1; }
 ```
 
 Within R, I do not need to create a `main()` function in C++.
@@ -108,6 +105,14 @@ document()
 install()
 ```
 
+Then you can use `library(ece244)` to access the functions.
+
+For development and live testing, it is sufficient to run `load_all()`.
+
+```{r pkg-load}
+load_all()
+```
+
 You need to run the previous lines every time you make a change to the C++ code
 and want to install the package again.
 
@@ -120,7 +125,8 @@ It is also good practise to use `use_build_ignore()` to ignore files that are
 not needed for the package. For example, I do not need the docs folder in the
 package installation, so I run `use_build_ignore("docs")`.
 
-My `.Rbuilignore`, because I render the notes, includes the following lines.
+My `.Rbuilignore`, because I render the notes, includes the following lines,
+and I edited it manually.
 
 ```
 ^snippets$
@@ -130,7 +136,7 @@ My `.Rbuilignore`, because I render the notes, includes the following lines.
 ^ece244\.Rproj$
 ^LICENSE\.md$
 .*qmd
-^_quarto\.yml$
+.*yml
 ```
 
 ## References 

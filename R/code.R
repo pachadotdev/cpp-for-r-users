@@ -37,6 +37,20 @@ mean_r <- function(x) {
   sum_r(x) / length(x)
 }
 
+#' Return the variance of the coordinates of a vector (R)
+#' @param x numeric vector
+#' @export
+var_r <- function(x) {
+  n <- length(x)
+  x1 <- 0
+  x2 <- 0
+  for (i in seq_along(x)) {
+    x1 <- x1 + x[i]
+    x2 <- x2 + x[i]^2
+  }
+  (x2 - x1^2 / n) / (n - 1)
+}
+
 #' Return the root mean square error (R)
 #' @param x numeric vector
 #' @param x0 numeric value
@@ -93,4 +107,34 @@ which_r <- function(x, y) {
   } else {
     return(res)
   }
+}
+
+#' Return the sum of the coordinates of a vector (C++)
+#' @inheritParams sum_r
+#' @param na_rm logical. Should missing values (including `NaN`) be removed?
+#' @export
+sum2_cpp <- function(x, na_rm = FALSE) {
+  sum2_cpp_(as.double(x), na_rm = na_rm)
+}
+
+#' Return the mean of the coordinates of a vector (C++)
+#' @inheritParams sum2_cpp
+#' @export
+mean2_cpp <- function(x, na_rm = FALSE) {
+  mean2_cpp_(as.double(x), na_rm = na_rm)
+}
+
+#' Return the variance of the coordinates of a vector (C++)
+#' @inheritParams sum2_cpp
+#' @export
+var2_cpp <- function(x, na_rm = FALSE) {
+  var2_cpp_(as.double(x), na_rm = na_rm)
+}
+
+#' Return the root mean square error (C++)
+#' @inheritParams rmse_r
+#' @param na_rm logical. Should missing values (including `NaN`) be removed?
+#' @export
+rmse2_cpp <- function(x, x0, na_rm = FALSE) {
+  rmse2_cpp_(as.double(x), as.double(x0), na_rm = na_rm)
 }

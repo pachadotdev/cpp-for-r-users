@@ -1,5 +1,17 @@
 # Statistical functions
 
+```{r 03-setup}
+#| label: setup
+#| echo: false
+#| message: false
+load_all()
+```
+
+## Fair warning
+
+These functions ignore `NA` values. These are altered in the 6th chapter of
+these notes.
+
 ## Sum of Vector Elements (`sum()`)
 
 I know R provides the `sum()` function, but I want to create this function
@@ -47,9 +59,6 @@ sum_cpp <- function(x) {
 To test, I run the following lines in the R console.
 
 ```{r 03-sum-test}
-cpp_register()
-load_all()
-
 set.seed(123) # for reproducibility
 x <- runif(1e3) # 1,000,000 elements
 
@@ -70,7 +79,7 @@ this example is to show how to create a package with C++ code. The code
 optimizations were deactived in the `Makevars` file and the improvements to the
 code will come later.
 
-## Average the elements of a vector
+## Arithmetic Mean (`mean()`)
 
 This function returns the average (or mean) of the elements of a vector.
 
@@ -114,11 +123,7 @@ mean_cpp <- function(x) {
 
 A benchmark of the two functions is the following.
 
-```{r 03-functions-bench2}
-load_all()
-
-x <- runif(1e3) # 1,000,000 elements
-
+```{r 03-mean-bench}
 mean(x)
 mean_cpp(x)
 mean_r(x)
@@ -130,13 +135,87 @@ mark(
 )
 ```
 
-I got ties. My C++ function is clearly faster than my R function, but is
-marginally slower than R's `mean()` function.
+My C++ function is faster than my R function, but is slower than R's 
+`mean()` function.
 
-# Root Mean Square Error (`rmse()`)
+## Variance (`var()`)
+
+This function returns the variance of the elements of a vector.
+
+```cpp
+[[cpp11::register]] double var_cpp_(doubles x) {
+  int n = x.size();
+
+  if (n < 2) {
+    return NA_REAL;
+  }
+
+  double ex = 0;
+  for (int i = 0; i < n; ++i) {
+    ex += x[i];
+  }
+  ex /= n;
+
+  double out = 0;
+  for (int i = 0; i < n; ++i) {
+    out += pow(x[i] - ex, 2);
+  }
+
+  return out / (n - 1);
+}
+```
+
+The R equivalent is the following.
+
+```r
+#' Return the variance of the coordinates of a vector (R)
+#' @param x numeric vector
+#' @export
+var_r <- function(x) {
+  n <- length(x)
+  x1 <- 0
+  x2 <- 0
+  for (i in seq_along(x)) {
+    x1 <- x1 + x[i]
+    x2 <- x2 + x[i]^2
+  }
+  (x2 - x1^2 / n) / (n - 1)
+}
+```
+
+I also need to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the variance of the coordinates of a vector (C++)
+#' @inheritParams var_r
+#' @export
+var_cpp <- function(x) {
+  var_cpp_(x)
+}
+```
+
+A benchmark of the two functions is the following.
+
+```{r 03-var-bench}
+var(x)
+var_cpp(x)
+var_r(x)
+
+mark(
+    var(x),
+    var_cpp(x),
+    var_r(x)
+)
+```
+
+My C++ function is faster than my R function, but is slower than R's 
+`var()` function.
+
+## Root Mean Square Error
 
 The next function returns the measure of the differences between the observed
-values or an estimator (x1, x2, ..., xn) and the true value (x0).
+values or an estimator (x1, x2, ..., xn) and the true value (x0). For example,
+x1, ..., xn could be experimental averages and x0 the true average.
 
 ```cpp
 [[cpp11::register]] double rmse_cpp_(doubles x, double x0) {
@@ -175,22 +254,27 @@ rmse_cpp <- function(x, x0) {
 A benchmark of the two functions is the following.
 
 ```{r 03-functions-bench}
-load_all()
+# create a list with 100 normal distributions with mean 0 and 1 million elements
+# each
+set.seed(123) # for reproducibility
+x <- list()
+for (i in 1:1e3) {
+    x[[i]] <- rnorm(1e3)
+}
 
-x <- runif(1e3) # 1,000,000 elements
-x0 <- 0.3 # some arbitrary value
+# compute the mean of each distribution
+x <- sapply(x, mean)
 
-# print the first 10 output's coordinates
-rmse_cpp(x, x0)
-rmse_r(x, x0)
+rmse_cpp(x, 0)
+rmse_r(x, 0)
 
 mark(
-    rmse_cpp(x, x0),
-    rmse_r(x, x0)
+    rmse_cpp(x, 0),
+    rmse_r(x, 0)
 )
 ```
 
-Once again, R wins (for now).
+The R implementation is faster than the C++ implementation.
 
 ## References
 

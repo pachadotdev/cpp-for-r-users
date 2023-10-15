@@ -5,4 +5,4 @@
 ^ece244\.Rproj$
 ^LICENSE\.md$
 .*qmd
-^_quarto\.yml$
+.*yml

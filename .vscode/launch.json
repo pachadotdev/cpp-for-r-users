@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/pacha/github/cpp-for-r-users/ece244/src",
-      "program": "/home/pacha/github/cpp-for-r-users/ece244/src/build/Debug/outDebug",
+      "cwd": "/home/pacha/github/cpp-for-r-users/src",
+      "program": "/home/pacha/github/cpp-for-r-users/src/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

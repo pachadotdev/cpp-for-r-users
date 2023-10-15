@@ -28,6 +28,13 @@ mean_cpp <- function(x) {
   mean_cpp_(x)
 }
 
+#' Return the variance of the coordinates of a vector (C++)
+#' @inheritParams var_r
+#' @export
+var_cpp <- function(x) {
+  var_cpp_(x)
+}
+
 #' Return the root mean square error (C++)
 #' @inheritParams rmse_r
 #' @export
@@ -61,4 +68,39 @@ cumsum_cpp <- function(x) {
 #' @export
 cumprod_cpp <- function(x) {
   cumprod_cpp_(as.double(x))
+}
+
+#' Return the cumulative minimum of the coordinates of a vector (C++)
+#' @param x numeric vector
+#' @export
+cummin_cpp <- function(x) {
+  cummin_cpp_(as.double(x))
+}
+
+#' Return the cumulative maximum of the coordinates of a vector (C++)
+#' @param x numeric vector
+#' @export
+cummax_cpp <- function(x) {
+  cummax_cpp_(as.double(x))
+}
+
+#' Return the first order lagged differences of the coordinates of a vector (C++)
+#' @param x numeric vector
+#' @export
+diff1_cpp <- function(x) {
+  diff1_cpp_(as.double(x))
+}
+
+#' Return the n-th order lagged differences of the coordinates of a vector (C++)
+#' @param x numeric vector
+#' @export
+diff_cpp <- function(x, lag = 1) {
+  diff_cpp_(as.double(x), as.integer(lag))
+}
+
+#' Return the n-th order lagged differences of the coordinates of a vector (C++)
+#' @param x numeric vector
+#' @export
+range_cpp <- function(x) {
+  range_cpp_(as.double(x))
 }

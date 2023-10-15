@@ -1,0 +1,269 @@
+# Statistical functions with missing values
+
+```{r 06-setup}
+#| label: setup
+#| echo: false
+#| message: false
+load_all()
+```
+
+## Sum of Vector Elements (`sum()`)
+
+The following function returns the sum of the elements of a vector.
+
+```cpp
+[[cpp11::register]] double sum2_cpp_(doubles x, bool na_rm = false) {
+  int n = x.size();
+  double total = 0;
+  for (int i = 0; i < n; ++i) {
+    if (na_rm && ISNAN(x[i])) {
+      continue;
+    } else {
+      total += x[i];
+    }
+  }
+  return total;
+}
+```
+
+I also have to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the sum of the coordinates of a vector (C++)
+#' @inheritParams sum_r
+#' @param na_rm logical. Should missing values (including `NaN`) be removed?
+#' @export
+sum2_cpp <- function(x, na_rm = FALSE) {
+  sum2_cpp_(as.double(x), na_rm = na_rm)
+}
+```
+
+To test, I run the following lines in the R console.
+
+```{r 06-sum-test}
+set.seed(123) # for reproducibility
+x <- runif(1e3) # 1,000,000 elements
+x[sample(1:1e3, 1e2)] <- NA # change some elements to NA at random
+
+sum(x, na.rm = FALSE)
+sum2_cpp(x, na_rm = FALSE)
+
+sum(x, na.rm = TRUE)
+sum2_cpp(x, na_rm = TRUE)
+
+mark(
+    sum(x, na.rm = TRUE),
+    sum2_cpp(x, na_rm = TRUE)
+)
+```
+
+## Arithmetic Mean (`mean()`)
+
+This function returns the average (or mean) of the elements of a vector.
+
+```cpp
+[[cpp11::register]] double mean2_cpp_(doubles x, bool na_rm = false) {
+  int n = x.size();
+
+  int m = 0;
+  for (int i = 0; i < n; ++i) {
+    if (na_rm && ISNAN(x[i])) {
+      continue;
+    } else {
+      ++m;
+    }
+  }
+
+  if (m == 0) {
+    return NA_REAL;
+  }
+
+  double y = 0;
+  for (int i = 0; i < n; ++i) {
+    if (na_rm && ISNAN(x[i])) {
+      continue;
+    } else {
+      y += x[i];
+    }
+  }
+
+  return y / m;
+}
+```
+
+I also need to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the mean of the coordinates of a vector (C++)
+#' @inheritParams sum2_cpp
+#' @export
+mean2_cpp <- function(x, na_rm = FALSE) {
+  mean2_cpp_(as.double(x), na_rm = na_rm)
+}
+```
+
+A benchmark of the two functions is the following.
+
+```{r 06-mean-bench}
+mean(x)
+mean2_cpp(x)
+
+mean(x, na.rm = TRUE)
+mean2_cpp(x, na_rm = TRUE)
+
+mark(
+    mean(x, na.rm = TRUE),
+    mean2_cpp(x, na_rm = TRUE)
+)
+```
+
+## Variance (`var()`)
+
+This function returns the variance of the elements of a vector.
+
+```cpp
+[[cpp11::register]] double var2_cpp_(doubles x, bool na_rm = false) {
+  int n = x.size();
+
+  if (n < 2) {
+    return NA_REAL;
+  }
+
+  int m = 0;
+  for (int i = 0; i < n; ++i) {
+    if (na_rm && ISNAN(x[i])) {
+      continue;
+    } else {
+      ++m;
+    }
+  }
+
+  if (m < 2) {
+    return NA_REAL;
+  }
+
+  double ex = 0;
+  for (int i = 0; i < n; ++i) {
+    if (na_rm && ISNAN(x[i])) {
+      continue;
+    } else {
+      ex += x[i];
+    }
+  }
+  ex /= m;
+
+  double out = 0;
+  for (int i = 0; i < n; ++i) {
+    if (na_rm && ISNAN(x[i])) {
+      continue;
+    } else {
+      out += pow(x[i] - ex, 2);
+    }
+  }
+
+  return out / (m - 1);
+}
+```
+
+I also need to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the variance of the coordinates of a vector (C++)
+#' @inheritParams sum2_cpp
+#' @export
+var2_cpp <- function(x, na_rm = FALSE) {
+  var2_cpp_(as.double(x), na_rm = na_rm)
+}
+```
+
+A benchmark of the two functions is the following.
+
+```{r 03-var-bench}
+var(x)
+var2_cpp(x)
+
+var(x, na.rm = TRUE)
+var2_cpp(x, na_rm = TRUE)
+
+mark(
+    var(x, na.rm = TRUE),
+    var2_cpp(x, na_rm = TRUE)
+)
+```
+
+## Root Mean Square Error
+
+The next function returns the measure of the differences between the observed
+values or an estimator (x1, x2, ..., xn) and the true value (x0). For example,
+x1, ..., xn could be experimental averages and x0 the true average.
+
+```cpp
+[[cpp11::register]] double rmse2_cpp_(doubles x, double x0) {
+  int n = x.size();
+
+  int m = 0;
+  for (int i = 0; i < n; ++i) {
+    if (ISNAN(x[i])) {
+      continue;
+    } else {
+      ++m;
+    }
+  }
+
+  if (m == 0) {
+    return NA_REAL;
+  }
+
+  double out;
+  for (int i = 0; i < n; ++i) {
+    if (na_rm && ISNAN(x[i])) {
+      continue;
+    } else {
+      out += pow(x[i] - x0, 2.0);
+    }
+  }
+  return sqrt(out / m);
+}
+```
+
+I also need to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the root mean square error (C++)
+#' @inheritParams rmse_r
+#' @param na_rm logical. Should missing values (including `NaN`) be removed?
+#' @export
+rmse2_cpp <- function(x, x0, na_rm = FALSE) {
+  rmse2_cpp_(as.double(x), as.double(x0), na_rm = na_rm)
+}
+```
+
+A benchmark of the base R versus C++ implementation is the following.
+
+```{r 03-functions-bench}
+# create a list with 100 normal distributions with mean 0 and 1 million elements
+# each
+set.seed(123) # for reproducibility
+x <- list()
+for (i in 1:1e3) {
+    x[[i]] <- rnorm(1e3)
+}
+
+# compute the mean of each distribution
+x <- sapply(x, mean)
+
+# remove some elements at random
+x[sample(1:1e3, 1e2)] <- NA
+
+rmse2_cpp(x, 0)
+rmse2_cpp(x, 0, na_rm = TRUE)
+
+mark(
+    sqrt(mean((x - 0)^2, na.rm = TRUE)),
+    rmse2_cpp(x, 0, na_rm = TRUE)
+)
+```
+
+## References
+
+* [Get started with cpp11](https://cpp11.r-lib.org/articles/cpp11.html#intro)
