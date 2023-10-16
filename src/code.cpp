@@ -343,3 +343,203 @@ namespace writable = cpp11::writable;
   }
   return sqrt(out / m);
 }
+
+[[cpp11::register]] doubles cumsum2_cpp_(doubles x, bool na_rm = false) {
+  int n = x.size();
+
+  if (na_rm == true) {
+    writable::doubles x2;
+    for (int i = 0; i < n; ++i) {
+      if (ISNAN(x[i])) {
+        continue;
+      } else {
+        x2.push_back(x[i]);
+      }
+    }
+    
+    int m = x2.size();
+    writable::doubles out;
+    if (m == 0) {
+      out.push_back(NA_REAL);
+      return out;
+    }
+
+    out.push_back(x2[0]);
+    for (int i = 1; i < m; ++i) {
+      out.push_back(out[i - 1] + x2[i]);
+    }
+
+    return out;
+  } else {
+    writable::doubles out(n);
+    if (ISNAN(x[0])) {
+      out[0] = NA_REAL;
+    } else {
+      out[0] = x[0];
+    }
+    for (int i = 1; i < n; ++i) {
+      if (ISNAN(x[i])) {
+        out[i] = NA_REAL;
+      } else {
+        if (ISNAN(out[i - 1])) {
+          out[i] = NA_REAL;
+        } else {
+          out[i] = out[i - 1] + x[i];
+        }
+      }
+    }
+
+    return out;
+  }
+}
+
+[[cpp11::register]] doubles cumprod2_cpp_(doubles x, bool na_rm = false) {
+  int n = x.size();
+
+  if (na_rm == true) {
+    writable::doubles x2;
+    for (int i = 0; i < n; ++i) {
+      if (ISNAN(x[i])) {
+        continue;
+      } else {
+        x2.push_back(x[i]);
+      }
+    }
+
+    int m = x2.size();
+    writable::doubles out;
+    if (m == 0) {
+      out.push_back(NA_REAL);
+      return out;
+    }
+
+    out.push_back(x2[0]);
+    for (int i = 1; i < m; ++i) {
+      out.push_back(out[i - 1] * x2[i]);
+    }
+
+    return out;
+  } else {
+    writable::doubles out(n);
+    if (ISNAN(x[0])) {
+      out[0] = NA_REAL;
+    } else {
+      out[0] = x[0];
+    }
+    for (int i = 1; i < n; ++i) {
+      if (ISNAN(x[i])) {
+        out[i] = NA_REAL;
+      } else {
+        if (ISNAN(out[i - 1])) {
+          out[i] = NA_REAL;
+        } else {
+          out[i] = out[i - 1] * x[i];
+        }
+      }
+    }
+
+    return out;
+  }
+}
+
+[[cpp11::register]] doubles cummin2_cpp_(doubles x, bool na_rm = false) {
+  int n = x.size();
+
+  if (na_rm == true) {
+    writable::doubles x2;
+    for (int i = 0; i < n; ++i) {
+      if (ISNAN(x[i])) {
+        continue;
+      } else {
+        x2.push_back(x[i]);
+      }
+    }
+
+    int m = x2.size();
+    writable::doubles out;
+    if (m == 0) {
+      out.push_back(NA_REAL);
+      return out;
+    }
+
+    out.push_back(x2[0]);
+    for (int i = 1; i < m; ++i) {
+      double y1 = x2[i - 1], y2 = x2[i];
+      out.push_back(std::min(y1, y2));
+    }
+
+    return out;
+  } else {
+    writable::doubles out(n);
+    if (ISNAN(x[0])) {
+      out[0] = NA_REAL;
+    } else {
+      out[0] = x[0];
+    }
+    for (int i = 1; i < n; ++i) {
+      if (ISNAN(x[i])) {
+        out[i] = NA_REAL;
+      } else {
+        double y1 = out[i - 1], y2 = x[i];
+        if (ISNAN(y1)) {
+          out[i] = NA_REAL;
+        } else {
+          out[i] = std::min(y1, y2);
+        }
+      }
+    }
+
+    return out;
+  }
+}
+
+[[cpp11::register]] doubles cummax2_cpp_(doubles x, bool na_rm = false) {
+  int n = x.size();
+
+  if (na_rm == true) {
+    writable::doubles x2;
+    for (int i = 0; i < n; ++i) {
+      if (ISNAN(x[i])) {
+        continue;
+      } else {
+        x2.push_back(x[i]);
+      }
+    }
+
+    int m = x2.size();
+    writable::doubles out;
+    if (m == 0) {
+      out.push_back(NA_REAL);
+      return out;
+    }
+
+    out.push_back(x2[0]);
+    for (int i = 1; i < m; ++i) {
+      double y1 = x2[i - 1], y2 = x2[i];
+      out.push_back(std::min(y1, y2));
+    }
+
+    return out;
+  } else {
+    writable::doubles out(n);
+    if (ISNAN(x[0])) {
+      out[0] = NA_REAL;
+    } else {
+      out[0] = x[0];
+    }
+    for (int i = 1; i < n; ++i) {
+      if (ISNAN(x[i])) {
+        out[i] = NA_REAL;
+      } else {
+        double y1 = out[i - 1], y2 = x[i];
+        if (ISNAN(y1)) {
+          out[i] = NA_REAL;
+        } else {
+          out[i] = std::max(y1, y2);
+        }
+      }
+    }
+
+    return out;
+  }
+}

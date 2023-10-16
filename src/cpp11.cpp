@@ -173,6 +173,34 @@ extern "C" SEXP _ece244_rmse2_cpp_(SEXP x, SEXP x0, SEXP na_rm) {
     return cpp11::as_sexp(rmse2_cpp_(cpp11::as_cpp<cpp11::decay_t<doubles>>(x), cpp11::as_cpp<cpp11::decay_t<double>>(x0), cpp11::as_cpp<cpp11::decay_t<bool>>(na_rm)));
   END_CPP11
 }
+// code.cpp
+doubles cumsum2_cpp_(doubles x, bool na_rm);
+extern "C" SEXP _ece244_cumsum2_cpp_(SEXP x, SEXP na_rm) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(cumsum2_cpp_(cpp11::as_cpp<cpp11::decay_t<doubles>>(x), cpp11::as_cpp<cpp11::decay_t<bool>>(na_rm)));
+  END_CPP11
+}
+// code.cpp
+doubles cumprod2_cpp_(doubles x, bool na_rm);
+extern "C" SEXP _ece244_cumprod2_cpp_(SEXP x, SEXP na_rm) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(cumprod2_cpp_(cpp11::as_cpp<cpp11::decay_t<doubles>>(x), cpp11::as_cpp<cpp11::decay_t<bool>>(na_rm)));
+  END_CPP11
+}
+// code.cpp
+doubles cummin2_cpp_(doubles x, bool na_rm);
+extern "C" SEXP _ece244_cummin2_cpp_(SEXP x, SEXP na_rm) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(cummin2_cpp_(cpp11::as_cpp<cpp11::decay_t<doubles>>(x), cpp11::as_cpp<cpp11::decay_t<bool>>(na_rm)));
+  END_CPP11
+}
+// code.cpp
+doubles cummax2_cpp_(doubles x, bool na_rm);
+extern "C" SEXP _ece244_cummax2_cpp_(SEXP x, SEXP na_rm) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(cummax2_cpp_(cpp11::as_cpp<cpp11::decay_t<doubles>>(x), cpp11::as_cpp<cpp11::decay_t<bool>>(na_rm)));
+  END_CPP11
+}
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
@@ -181,10 +209,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_ece244_all_cpp_3_",     (DL_FUNC) &_ece244_all_cpp_3_,     1},
     {"_ece244_all_cpp_4_",     (DL_FUNC) &_ece244_all_cpp_4_,     1},
     {"_ece244_any_cpp_",       (DL_FUNC) &_ece244_any_cpp_,       1},
+    {"_ece244_cummax2_cpp_",   (DL_FUNC) &_ece244_cummax2_cpp_,   2},
     {"_ece244_cummax_cpp_",    (DL_FUNC) &_ece244_cummax_cpp_,    1},
+    {"_ece244_cummin2_cpp_",   (DL_FUNC) &_ece244_cummin2_cpp_,   2},
     {"_ece244_cummin_cpp_",    (DL_FUNC) &_ece244_cummin_cpp_,    1},
+    {"_ece244_cumprod2_cpp_",  (DL_FUNC) &_ece244_cumprod2_cpp_,  2},
     {"_ece244_cumprod_cpp_",   (DL_FUNC) &_ece244_cumprod_cpp_,   1},
     {"_ece244_cumprod_cpp_2_", (DL_FUNC) &_ece244_cumprod_cpp_2_, 1},
+    {"_ece244_cumsum2_cpp_",   (DL_FUNC) &_ece244_cumsum2_cpp_,   2},
     {"_ece244_cumsum_cpp_",    (DL_FUNC) &_ece244_cumsum_cpp_,    1},
     {"_ece244_diff1_cpp_",     (DL_FUNC) &_ece244_diff1_cpp_,     1},
     {"_ece244_diff_cpp_",      (DL_FUNC) &_ece244_diff_cpp_,      2},

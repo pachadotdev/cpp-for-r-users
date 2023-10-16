@@ -17,6 +17,7 @@ book:
     - 04-logical-functions.qmd
     - 05-rolling-functions.qmd
     - 06-statistical-functions-2.qmd
+    - 07-rolling-functions-2.qmd
     
 format:
   html:

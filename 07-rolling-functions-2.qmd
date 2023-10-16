@@ -1,0 +1,347 @@
+# Rolling functions with missing values
+
+```{r 05-setup}
+#| label: setup
+#| echo: false
+#| message: false
+load_all()
+```
+
+## Required packages
+
+Needed to visualize and simplify showing the results.
+
+```{r 05-packages}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(patchwork)
+```
+
+## Cumulative sum (`cumsum()`)
+
+This function returns the cumulative sum of the elements of a vector.
+
+```cpp
+[[cpp11::register]] doubles cumsum2_cpp_(doubles x, bool na_rm = false) {
+  int n = x.size();
+
+  if (na_rm == true) {
+    writable::doubles x2;
+    for (int i = 0; i < n; ++i) {
+      if (ISNAN(x[i])) {
+        continue;
+      } else {
+        x2.push_back(x[i]);
+      }
+    }
+    
+    int m = x2.size();
+    writable::doubles out;
+    if (m == 0) {
+      out.push_back(NA_REAL);
+      return out;
+    }
+
+    out.push_back(x2[0]);
+    for (int i = 1; i < m; ++i) {
+      out.push_back(out[i - 1] + x2[i]);
+    }
+
+    return out;
+  } else {
+    writable::doubles out(n);
+    if (ISNAN(x[0])) {
+      out[0] = NA_REAL;
+    } else {
+      out[0] = x[0];
+    }
+    for (int i = 1; i < n; ++i) {
+      if (ISNAN(x[i])) {
+        out[i] = NA_REAL;
+      } else {
+        if (ISNAN(out[i - 1])) {
+          out[i] = NA_REAL;
+        } else {
+          out[i] = out[i - 1] + x[i];
+        }
+      }
+    }
+
+    return out;
+  }
+}
+```
+I also need to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the cumulative sum of the coordinates of a vector (C++)
+#' @param x numeric vector
+#' @param na_rm logical. Should missing values (including `NaN`) be removed?
+#' @export
+cumsum2_cpp <- function(x, na_rm = FALSE) {
+  cumsum2_cpp_(as.double(x), na_rm = na_rm)
+}
+```
+
+A benchmark of the two functions is the following.
+
+```{r 05-cumsum-bench}
+set.seed(123) # for reproducibility
+x <- rpois(1e6, lambda = 2) # 1,000,000 elements
+
+cumsum(c(1, NA, 2, 4))
+cumsum2_cpp(c(1, NA, 2, 4))
+cumsum2_cpp(c(1, NA, 2, 4), na_rm = TRUE)
+
+mark(
+  cumsum(x),
+  cumsum2_cpp(x)
+)
+```
+
+## Cumulative product (`cumprod()`)
+
+The C++ implementation is similar to the previous part.
+
+```cpp
+[[cpp11::register]] doubles cumprod2_cpp_(doubles x, bool na_rm = false) {
+  int n = x.size();
+
+  if (na_rm == true) {
+    writable::doubles x2;
+    for (int i = 0; i < n; ++i) {
+      if (ISNAN(x[i])) {
+        continue;
+      } else {
+        x2.push_back(x[i]);
+      }
+    }
+
+    int m = x2.size();
+    writable::doubles out;
+    if (m == 0) {
+      out.push_back(NA_REAL);
+      return out;
+    }
+
+    out.push_back(x2[0]);
+    for (int i = 1; i < m; ++i) {
+      out.push_back(out[i - 1] * x2[i]);
+    }
+
+    return out;
+  } else {
+    writable::doubles out(n);
+    if (ISNAN(x[0])) {
+      out[0] = NA_REAL;
+    } else {
+      out[0] = x[0];
+    }
+    for (int i = 1; i < n; ++i) {
+      if (ISNAN(x[i])) {
+        out[i] = NA_REAL;
+      } else {
+        if (ISNAN(out[i - 1])) {
+          out[i] = NA_REAL;
+        } else {
+          out[i] = out[i - 1] * x[i];
+        }
+      }
+    }
+
+    return out;
+  }
+}
+```
+
+I need an auxiliary function to cast the input as double.
+
+```r
+#' Return the cumulative product of the coordinates of a vector (C++)
+#' @inheritParams cumsum_r
+#' @export
+cumprod2_cpp <- function(x, na_rm = FALSE) {
+  cumprod2_cpp_(as.double(x), na_rm = na_rm)
+}
+```
+
+Test correctness and Benchmark.
+
+```{r 05-functions-cumprod-benchmark}
+cumprod(c(1, NA, 2, 4))
+cumprod2_cpp(c(1, NA, 2, 4))
+cumprod2_cpp(c(1, NA, 2, 4), na_rm = TRUE)
+
+mark(
+  cumprod(x),
+  cumprod2_cpp(x)
+)
+```
+
+## Cumulative minimum (`cummin()`)
+
+The C++ implementation is similar to the previous part.
+
+```cpp
+[[cpp11::register]] doubles cummin2_cpp_(doubles x, bool na_rm = false) {
+  int n = x.size();
+
+  if (na_rm == true) {
+    writable::doubles x2;
+    for (int i = 0; i < n; ++i) {
+      if (ISNAN(x[i])) {
+        continue;
+      } else {
+        x2.push_back(x[i]);
+      }
+    }
+
+    int m = x2.size();
+    writable::doubles out;
+    if (m == 0) {
+      out.push_back(NA_REAL);
+      return out;
+    }
+
+    out.push_back(x2[0]);
+    for (int i = 1; i < m; ++i) {
+      double y1 = x2[i - 1], y2 = x2[i];
+      out.push_back(std::min(y1, y2));
+    }
+
+    return out;
+  } else {
+    writable::doubles out(n);
+    if (ISNAN(x[0])) {
+      out[0] = NA_REAL;
+    } else {
+      out[0] = x[0];
+    }
+    for (int i = 1; i < n; ++i) {
+      if (ISNAN(x[i])) {
+        out[i] = NA_REAL;
+      } else {
+        double y1 = out[i - 1], y2 = x[i];
+        if (ISNAN(y1)) {
+          out[i] = NA_REAL;
+        } else {
+          out[i] = std::min(y1, y2);
+        }
+      }
+    }
+
+    return out;
+  }
+}
+```
+
+I also have to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the cumulative minimum of the coordinates of a vector (C++)
+#' @inheritParams cumsum_r
+#' @export
+cummin2_cpp <- function(x, na_rm = FALSE) {
+  cummin2_cpp_(as.double(x), na_rm = na_rm)
+}
+```
+
+Test correctness and benchmark.
+
+```{r 05-cummin-correctness}
+cummin(c(1, NA, 2, 4))
+cummin2_cpp(c(1, NA, 2, 4))
+cummin2_cpp(c(1, NA, 2, 4), na_rm = TRUE)
+
+mark(
+  cummin(x),
+  cummin2_cpp(x)
+)
+```
+
+## Cumulative maximum (`cummax()`)
+
+The C++ implementation is similar to the previous part.
+
+```cpp
+[[cpp11::register]] doubles cummin2_cpp_(doubles x, bool na_rm = false) {
+  int n = x.size();
+
+  if (na_rm == true) {
+    writable::doubles x2;
+    for (int i = 0; i < n; ++i) {
+      if (ISNAN(x[i])) {
+        continue;
+      } else {
+        x2.push_back(x[i]);
+      }
+    }
+
+    int m = x2.size();
+    writable::doubles out;
+    if (m == 0) {
+      out.push_back(NA_REAL);
+      return out;
+    }
+
+    out.push_back(x2[0]);
+    for (int i = 1; i < m; ++i) {
+      double y1 = x2[i - 1], y2 = x2[i];
+      out.push_back(std::min(y1, y2));
+    }
+
+    return out;
+  } else {
+    writable::doubles out(n);
+    if (ISNAN(x[0])) {
+      out[0] = NA_REAL;
+    } else {
+      out[0] = x[0];
+    }
+    for (int i = 1; i < n; ++i) {
+      if (ISNAN(x[i])) {
+        out[i] = NA_REAL;
+      } else {
+        double y1 = out[i - 1], y2 = x[i];
+        if (ISNAN(y1)) {
+          out[i] = NA_REAL;
+        } else {
+          out[i] = std::min(y1, y2);
+        }
+      }
+    }
+
+    return out;
+  }
+}
+```
+
+I also have to add the corresponding auxiliary function for the documentation.
+
+```r
+#' Return the cumulative maximum of the coordinates of a vector (C++)
+#' @inheritParams cumsum_r
+#' @export
+cummax2_cpp <- function(x, na_rm = FALSE) {
+  cummax2_cpp_(as.double(x), na_rm = na_rm)
+}
+```
+
+Test correctness and benchmark.
+
+```{r 05-cummax-correctness}
+cummax(c(1, NA, 2, 4))
+cummax2_cpp(c(1, NA, 2, 4))
+cummax2_cpp(c(1, NA, 2, 4), na_rm = TRUE)
+
+mark(
+  cummax(x),
+  cummax2_cpp(x)
+)
+```
+
+## References
+
+* [Get started with cpp11](https://cpp11.r-lib.org/articles/cpp11.html#intro)

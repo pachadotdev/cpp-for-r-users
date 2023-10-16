@@ -95,3 +95,19 @@ var2_cpp_ <- function(x, na_rm) {
 rmse2_cpp_ <- function(x, x0, na_rm) {
   .Call(`_ece244_rmse2_cpp_`, x, x0, na_rm)
 }
+
+cumsum2_cpp_ <- function(x, na_rm) {
+  .Call(`_ece244_cumsum2_cpp_`, x, na_rm)
+}
+
+cumprod2_cpp_ <- function(x, na_rm) {
+  .Call(`_ece244_cumprod2_cpp_`, x, na_rm)
+}
+
+cummin2_cpp_ <- function(x, na_rm) {
+  .Call(`_ece244_cummin2_cpp_`, x, na_rm)
+}
+
+cummax2_cpp_ <- function(x, na_rm) {
+  .Call(`_ece244_cummax2_cpp_`, x, na_rm)
+}

@@ -67,9 +67,9 @@ sum_cpp(x)
 sum_r(x)
 
 mark(
-    sum(x),
-    sum_cpp(x),
-    sum_r(x)
+  sum(x),
+  sum_cpp(x),
+  sum_r(x)
 )
 ```
 
@@ -129,9 +129,9 @@ mean_cpp(x)
 mean_r(x)
 
 mark(
-    mean(x),
-    mean_cpp(x),
-    mean_r(x)
+  mean(x),
+  mean_cpp(x),
+  mean_r(x)
 )
 ```
 
@@ -202,9 +202,9 @@ var_cpp(x)
 var_r(x)
 
 mark(
-    var(x),
-    var_cpp(x),
-    var_r(x)
+  var(x),
+  var_cpp(x),
+  var_r(x)
 )
 ```
 
@@ -259,7 +259,7 @@ A benchmark of the two functions is the following.
 set.seed(123) # for reproducibility
 x <- list()
 for (i in 1:1e3) {
-    x[[i]] <- rnorm(1e3)
+  x[[i]] <- rnorm(1e3)
 }
 
 # compute the mean of each distribution
@@ -269,8 +269,8 @@ rmse_cpp(x, 0)
 rmse_r(x, 0)
 
 mark(
-    rmse_cpp(x, 0),
-    rmse_r(x, 0)
+  rmse_cpp(x, 0),
+  rmse_r(x, 0)
 )
 ```
 

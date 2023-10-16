@@ -138,3 +138,32 @@ var2_cpp <- function(x, na_rm = FALSE) {
 rmse2_cpp <- function(x, x0, na_rm = FALSE) {
   rmse2_cpp_(as.double(x), as.double(x0), na_rm = na_rm)
 }
+
+#' Return the cumulative sum of the coordinates of a vector (C++)
+#' @param x numeric vector
+#' @param na_rm logical. Should missing values (including `NaN`) be removed?
+#' @export
+cumsum2_cpp <- function(x, na_rm = FALSE) {
+  cumsum2_cpp_(as.double(x), na_rm = na_rm)
+}
+
+#' Return the cumulative product of the coordinates of a vector (C++)
+#' @inheritParams cumsum2_r
+#' @export
+cumprod2_cpp <- function(x, na_rm = FALSE) {
+  cumprod2_cpp_(as.double(x), na_rm = na_rm)
+}
+
+#' Return the cumulative minimum of the coordinates of a vector (C++)
+#' @inheritParams cumsum2_r
+#' @export
+cummin2_cpp <- function(x, na_rm = FALSE) {
+  cummin2_cpp_(as.double(x), na_rm = na_rm)
+}
+
+#' Return the cumulative maximum of the coordinates of a vector (C++)
+#' @inheritParams cumsum2_r
+#' @export
+cummax2_cpp <- function(x, na_rm = FALSE) {
+  cummax2_cpp_(as.double(x), na_rm = na_rm)
+}
