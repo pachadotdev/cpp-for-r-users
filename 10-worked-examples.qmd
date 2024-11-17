@@ -1,4 +1,4 @@
-# Debugging R Packages
+# Worked Examples
 
 ## Motivation
 
