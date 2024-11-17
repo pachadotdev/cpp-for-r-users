@@ -229,6 +229,13 @@ extern "C" SEXP _ece244_square_coordinates2_(SEXP x) {
     return cpp11::as_sexp(square_coordinates2_(cpp11::as_cpp<cpp11::decay_t<writable::integers>>(x)));
   END_CPP11
 }
+// code.cpp
+int bad_();
+extern "C" SEXP _ece244_bad_() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(bad_());
+  END_CPP11
+}
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
@@ -237,6 +244,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_ece244_all_cpp_3_",           (DL_FUNC) &_ece244_all_cpp_3_,           1},
     {"_ece244_all_cpp_4_",           (DL_FUNC) &_ece244_all_cpp_4_,           1},
     {"_ece244_any_cpp_",             (DL_FUNC) &_ece244_any_cpp_,             1},
+    {"_ece244_bad_",                 (DL_FUNC) &_ece244_bad_,                 0},
     {"_ece244_cummax2_cpp_",         (DL_FUNC) &_ece244_cummax2_cpp_,         2},
     {"_ece244_cummax_cpp_",          (DL_FUNC) &_ece244_cummax_cpp_,          1},
     {"_ece244_cummin2_cpp_",         (DL_FUNC) &_ece244_cummin2_cpp_,         2},

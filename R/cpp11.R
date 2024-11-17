@@ -127,3 +127,7 @@ square_coordinates_ <- function(x) {
 square_coordinates2_ <- function(x) {
   .Call(`_ece244_square_coordinates2_`, x)
 }
+
+bad_ <- function() {
+  .Call(`_ece244_bad_`)
+}

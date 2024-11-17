@@ -523,3 +523,12 @@ using namespace cpp11;
   }
   return x;
 }
+
+[[cpp11::register]] int bad_() {
+  int x = 42;     // A valid integer
+  int *ptr = &x;  // Pointer to `x`
+
+  // Introduce undefined behavior: alignment issue
+  auto misaligned_ptr = reinterpret_cast<long *>(ptr);
+  return *misaligned_ptr;  // Read through misaligned pointer
+}

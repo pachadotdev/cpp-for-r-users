@@ -18,8 +18,9 @@ book:
     - 05-rolling-functions.qmd
     - 06-statistical-functions-2.qmd
     - 07-rolling-functions-2.qmd
-    - 08-r-packages-expanded.qmd
+    - 08-debugging.qmd
     - 09-cpp11-rcpp.qmd
+    - 10-worked-examples.qmd
 
 bibliography: references.bib
 

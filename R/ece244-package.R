@@ -267,3 +267,12 @@ cummin2_cpp <- function(x, na_rm = FALSE) {
 cummax2_cpp <- function(x, na_rm = FALSE) {
   cummax2_cpp_(as.double(x), na_rm = na_rm)
 }
+
+#' @title Bad function
+#' @description This function has a sneaky sanitizer error
+#' @export
+#' @examples
+#' bad()
+bad <- function() {
+  bad_()
+}
