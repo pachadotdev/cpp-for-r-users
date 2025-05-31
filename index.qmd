@@ -43,4 +43,10 @@ Chapter 8 is about how tocreate R packages that use C++ code.
 
 Chapter 9 covers some differences between `cpp` and `Rcpp`.
 
+## Additional resources
+
+Check my [ECE 244 Class Notes](https://pacha.dev/ece244-class-notes/). These notes
+cover a general approach to C++ programming covered in ECE244 at the University of
+Toronto.
+
 ## References

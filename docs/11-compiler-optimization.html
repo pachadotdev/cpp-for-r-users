@@ -53,27 +53,7 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-
-div.csl-bib-body { }
-div.csl-entry {
-clear: both;
-margin-bottom: 0em;
-}
-.hanging-indent div.csl-entry {
-margin-left:2em;
-text-indent:-2em;
-}
-div.csl-left-margin {
-min-width:2em;
-float:left;
-}
-div.csl-right-inline {
-margin-left:2em;
-padding-left:1em;
-}
-div.csl-indent {
-margin-left: 2em;
-}</style>
+</style>
 
 
 <script>const headroomChanged = new CustomEvent("quarto-hrChanged", {
@@ -1722,8 +1702,7 @@ async function fuseSearch(query, fuse, fuseOptions) {
 }
 </script>
 <meta name="quarto:offset" content="./">
-<link href="./10-worked-examples.html" rel="next">
-<link href="./08-debugging.html" rel="prev">
+<link href="./10-worked-examples.html" rel="prev">
 <script>const sectionChanged = new CustomEvent("quarto-sectionChanged", {
   detail: {},
   bubbles: true,
@@ -4776,7 +4755,7 @@ vertical-align: -.125em;
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./09-cpp11-rcpp.html"><span class="chapter-title">Compiler optimization</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./11-compiler-optimization.html"><span class="chapter-title">Compiler optimization</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -4848,7 +4827,7 @@ vertical-align: -.125em;
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./09-cpp11-rcpp.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Compiler optimization</span></a>
+  <a href="./09-cpp11-rcpp.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Compiler optimization</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -4858,7 +4837,7 @@ vertical-align: -.125em;
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./11-compiler-optimization.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Compiler optimization</span></a>
+  <a href="./11-compiler-optimization.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Compiler optimization</span></a>
   </div>
 </li>
     </ul>
@@ -4872,8 +4851,8 @@ vertical-align: -.125em;
    
   <ul>
   <li><a href="#motivation" id="toc-motivation" class="nav-link active" data-scroll-target="#motivation">Motivation</a></li>
-  <li><a href="#read-and-write" id="toc-read-and-write" class="nav-link" data-scroll-target="#read-and-write">Read and write</a></li>
-  <li><a href="#external-pointers" id="toc-external-pointers" class="nav-link" data-scroll-target="#external-pointers">External pointers</a></li>
+  <li><a href="#user-wide-makevars" id="toc-user-wide-makevars" class="nav-link" data-scroll-target="#user-wide-makevars">User-wide Makevars</a></li>
+  <li><a href="#anticonf-scripts" id="toc-anticonf-scripts" class="nav-link" data-scroll-target="#anticonf-scripts">Anticonf scripts</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
@@ -4902,66 +4881,106 @@ vertical-align: -.125em;
 
 <section id="motivation" class="level2">
 <h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
-<p><span class="citation" data-cites="vaughan">Vaughan, Hester, and Francois (<a href="#ref-vaughan" role="doc-biblioref">2024</a>)</span> already provides some details. Here I will expand on the differences between <code>cpp11</code> and <code>Rcpp</code>.</p>
+<p>R uses default GCC/Clang compiler optimizations, which can limit the performance of C++ code.</p>
 </section>
-<section id="read-and-write" class="level2">
-<h2 class="anchored" data-anchor-id="read-and-write">Read and write</h2>
-<p>In <code>cpp11</code>, when a variable is declared, it is read-only by default. This is different from <code>Rcpp</code>, where variables are read-write by default.</p>
-<p>This code will not compile in <code>cpp11</code>:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span> integers <span class="va">square_coordinates_</span><span class="op">(</span>integers x<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  integers out <span class="op">=</span> x<span class="op">;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> x<span class="op">.</span>size<span class="op">();</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    out<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> x<span class="op">[</span>i<span class="op">]</span> <span class="op">*</span> x<span class="op">[</span>i<span class="op">];</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> out<span class="op">;</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The error message is:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">code.cpp:515:10:</span> error: lvalue required as left operand of assignment</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">515</span> <span class="kw">|</span>     <span class="va">out</span><span class="op">[</span>i<span class="op">]</span> <span class="ex">=</span> x<span class="pp">[</span><span class="ss">i</span><span class="pp">]</span> <span class="pp">*</span> x<span class="pp">[</span><span class="ss">i</span><span class="pp">]</span><span class="kw">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>To fix this, you need to explicitly declare the variable as writable:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span> integers <span class="va">square_coordinates_</span><span class="op">(</span>integers x<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  writable<span class="op">::</span>integers out <span class="op">=</span> x<span class="op">;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> x<span class="op">.</span>size<span class="op">();</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    out<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> x<span class="op">[</span>i<span class="op">]</span> <span class="op">*</span> x<span class="op">[</span>i<span class="op">];</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> out<span class="op">;</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The arguments are also read-only by default in <code>cpp11</code>, unless you declare them as writable, as in the following example:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">[[</span><span class="at">cpp11</span><span class="op">::</span><span class="at">register</span><span class="op">]]</span> integers <span class="va">square_coordinates2_</span><span class="op">(</span>writable<span class="op">::</span>integers x<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> x<span class="op">.</span>size<span class="op">();</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    x<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> x<span class="op">[</span>i<span class="op">]</span> <span class="op">*</span> x<span class="op">[</span>i<span class="op">];</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> x<span class="op">;</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="user-wide-makevars" class="level2">
+<h2 class="anchored" data-anchor-id="user-wide-makevars">User-wide Makevars</h2>
+<p>The following Makevars example, which should be in <code>~/.R/Makevars</code>, SETS the optimization level to <code>-O3</code> for all C++ code compiled by R and uses additional flags to enable more aggressive optimizations that can be set at setup level but not package level (or CRAN will reject the package):</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Override R's optimization level</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">CXXFLAGS</span> = <span class="at">-g</span> <span class="at">-O3</span> <span class="at">-march</span><span class="op">=</span>native</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">CXX11FLAGS</span> = <span class="at">-g</span> <span class="at">-O3</span> <span class="at">-march</span><span class="op">=</span>native</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">CXX14FLAGS</span> = <span class="at">-g</span> <span class="at">-O3</span> <span class="at">-march</span><span class="op">=</span>native</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">CXX17FLAGS</span> = <span class="at">-g</span> <span class="at">-O3</span> <span class="at">-march</span><span class="op">=</span>native</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Additional optimizations</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">CXXFLAGS</span> += <span class="at">-funroll-loops</span> <span class="at">-ftree-vectorize</span> <span class="at">-fprefetch-loop-arrays</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ex">CXXFLAGS</span> += <span class="at">-fomit-frame-pointer</span> <span class="at">-fstrict-aliasing</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Link-time optimization</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ex">CXXFLAGS</span> += <span class="at">-flto</span><span class="op">=</span>auto</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ex">LDFLAGS</span> += <span class="at">-flto</span><span class="op">=</span>auto</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="external-pointers" class="level2">
-<h2 class="anchored" data-anchor-id="external-pointers">External pointers</h2>
-<p>In <code>cpp11</code>, you can use <code>external_pointer</code>. In <code>Rcpp</code>, you can use <code>XPtr</code> to create external pointers. These have a quite different syntax, and <code>cpp11</code> does not provide an <code>attr</code> method for external pointers.</p>
-<p>For example, the <a href="https://github.com/pachadotdev/cpp11tesseract">cpp11tesseract</a> package defines:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> cpp11<span class="op">::</span>external_pointer<span class="op">&lt;</span>tesseract<span class="op">::</span>TessBaseAPI<span class="op">,</span> tess_finalizer<span class="op">&gt;</span> TessPtr<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Then <code>TessPtr</code> is called with:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>TessPtr ptr<span class="op">(</span>api<span class="op">);</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> ptr<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>As a result, the R equivalent that the OCR C++ function verifies that the engine is such that the following is true:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">inherits</span>(engine, <span class="st">"externalptr"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The equivalent <a href="https://github.com/ropensci/tesseract/">tesseract</a> package, that uses <code>Rcpp</code>, defines:</p>
-<pre><code>typedef Rcpp::XPtr&lt;tesseract::TessBaseAPI, Rcpp::PreserveStorage, tess_finalizer, true&gt; TessPtr;</code></pre>
-<p>Then <code>TessPtr</code> is called with:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>TessPtr ptr<span class="op">(</span>api<span class="op">);</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ptr<span class="op">.</span>attr<span class="op">(</span><span class="st">"class"</span><span class="op">)</span> <span class="op">=</span> Rcpp<span class="op">::</span>CharacterVector<span class="op">::</span>create<span class="op">(</span><span class="st">"tesseract"</span><span class="op">);</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> ptr<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Similarly, the <code>Rcpp</code> version checks the engine with:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">inherits</span>(engine, <span class="st">"tesseract"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="anticonf-scripts" class="level2">
+<h2 class="anchored" data-anchor-id="anticonf-scripts">Anticonf scripts</h2>
+<p>The idea of an “anticonf” configure script is to provide a tailored Makevars file having in mind that a package will be run on different systems. The anticonf name comes from the fact that it is not a standard <code>configure</code> script created with tools such as GNU Autoconf, but rather a templated script that generates a <code>Makevars</code> by detecting the system and compiler settings (e.g., number of cores, optimization flags, etc.).</p>
+<p>The <a href="https://github.com/pachadotdev/capybara">capybara</a> package has the following <code>Makevars.in</code> file:</p>
+<pre class="make"><code>CXX_STD ?= CXX11 CXX14 CXX17
+PKG_CXXFLAGS = -DARMA_NO_DEBUG -DARMA_USE_BLAS -DARMA_USE_LAPACK -DCAPYBARA_NCORES=@ncores@ $(SHLIB_OPENMP_CXXFLAGS) @SAFE_OPTFLAGS@
+PKG_LIBS = $(SHLIB_OPENMP_CXXFLAGS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)</code></pre>
+<p>This file is a template for the <code>Makevars</code> file. The <code>@ncores@</code> and <code>@SAFE_OPTFLAGS@</code> are replaced by the <code>configure</code> script, which is run when the package is installed.</p>
+<p>Capybara’s <code>configure</code> script is as follows:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Anticonf script by Pacha (2025)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="va">PKG_CONFIG_NAME</span><span class="op">=</span><span class="st">"capybara"</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Get R configuration</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="va">CXX</span><span class="op">=</span><span class="va">$(${R_HOME}</span><span class="ex">/bin/R</span> CMD config CXX<span class="va">)</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="va">CXXFLAGS</span><span class="op">=</span><span class="va">$(${R_HOME}</span><span class="ex">/bin/R</span> CMD config CXXFLAGS<span class="va">)</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to test compiler flag</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">test_flag()</span> <span class="kw">{</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">'int main(){return 0;}'</span> <span class="op">&gt;</span> conftest.cpp</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="va">$CXX</span> <span class="va">$CXXFLAGS</span> <span class="va">$1</span> conftest.cpp <span class="at">-o</span> conftest <span class="op">&gt;</span>/dev/null <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rm</span> <span class="at">-f</span> conftest conftest.cpp</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rm</span> <span class="at">-f</span> conftest conftest.cpp</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">1</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">fi</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co"># For CRAN, we can't override -O2, but we can add other safe optimizations</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="va">SAFE_OPTFLAGS</span><span class="op">=</span><span class="st">""</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Test portable optimization flags that don't change the -O level</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="va">PORTABLE_OPTS</span><span class="op">=</span><span class="st">"-funroll-loops -ftree-vectorize"</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> opt <span class="kw">in</span> <span class="va">$PORTABLE_OPTS</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="ex">test_flag</span> <span class="st">"</span><span class="va">$opt</span><span class="st">"</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="va">SAFE_OPTFLAGS</span><span class="op">=</span><span class="st">"</span><span class="va">$SAFE_OPTFLAGS</span><span class="st"> </span><span class="va">$opt</span><span class="st">"</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">fi</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-n</span> <span class="st">"</span><span class="va">$SAFE_OPTFLAGS</span><span class="st">"</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">"Additional optimizations:</span><span class="va">$SAFE_OPTFLAGS</span><span class="st">"</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Detect number of cores</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">-n</span> <span class="st">"</span><span class="va">$CAPYBARA_NCORES</span><span class="st">"</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>  <span class="va">num_cores</span><span class="op">=</span><span class="st">"</span><span class="va">$CAPYBARA_NCORES</span><span class="st">"</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="bu">[</span> <span class="ot">-f</span> /proc/cpuinfo <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    <span class="va">num_cores</span><span class="op">=</span><span class="va">$(</span><span class="fu">grep</span> <span class="at">-c</span> <span class="st">"^processor"</span> /proc/cpuinfo <span class="dv">2</span><span class="op">&gt;</span>/dev/null <span class="kw">||</span> <span class="bu">echo</span> 1<span class="va">)</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  <span class="cf">elif</span> <span class="bu">[</span> <span class="st">"</span><span class="va">$(</span><span class="fu">uname</span><span class="va">)</span><span class="st">"</span> <span class="ot">=</span> <span class="st">"Darwin"</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    <span class="va">num_cores</span><span class="op">=</span><span class="va">$(</span><span class="ex">sysctl</span> <span class="at">-n</span> hw.ncpu <span class="dv">2</span><span class="op">&gt;</span>/dev/null <span class="kw">||</span> <span class="bu">echo</span> 1<span class="va">)</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    <span class="va">num_cores</span><span class="op">=</span>1</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  <span class="cf">fi</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="bu">[</span> <span class="st">"</span><span class="va">$num_cores</span><span class="st">"</span> <span class="ot">-gt</span> 2 <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    <span class="va">num_cores</span><span class="op">=</span><span class="va">$((num_cores</span> <span class="op">-</span> <span class="dv">1</span><span class="va">))</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>  <span class="cf">fi</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Default thread count: </span><span class="va">$num_cores</span><span class="st">"</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Create Makevars from template</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Creating src/Makevars"</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-e</span> <span class="st">"s|@ncores@|</span><span class="va">${num_cores}</span><span class="st">|g"</span> <span class="dt">\</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">-e</span> <span class="st">"s|@SAFE_OPTFLAGS@|</span><span class="va">${SAFE_OPTFLAGS}</span><span class="st">|g"</span> <span class="dt">\</span></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    src/Makevars.in <span class="op">&gt;</span> src/Makevars</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Configuration complete"</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">""</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"NOTE: This build will use R's default -O2 optimization level for CRAN compliance."</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"For maximum performance, see inst/Makevars.user.example"</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a><span class="bu">exit</span> 0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This script detects the number of cores available on the system and sets the <code>CAPYBARA_NCORES</code> variable accordingly. It also tests for safe optimization flags that can be added to the <code>Makevars</code> file without changing the default <code>-O2</code> optimization level used by R. It also serves the goal of testing that a simple file can be compiled.</p>
 </section>
-<section id="references" class="level2">
-<h2 class="anchored" data-anchor-id="references">References</h2>
+<section id="references" class="level1">
+<h1>References</h1>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-vaughan" class="csl-entry" role="listitem">
-Vaughan, Davis, Jim Hester, and Roman Francois. 2024. <span>“Get Started with Cpp11.”</span> <a href="https://cpp11.r-lib.org/articles/cpp11.html#intro">https://cpp11.r-lib.org/articles/cpp11.html#intro</a>.
-</div>
-</div>
 </section>
 
 </main> <!-- /main -->
@@ -5387,14 +5406,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./08-debugging.html" class="pagination-link" aria-label="Debugging R Packages">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Debugging R Packages</span></span>
+      <a href="./10-worked-examples.html" class="pagination-link" aria-label="Worked Examples">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Worked Examples</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./10-worked-examples.html" class="pagination-link" aria-label="Worked Examples">
-        <span class="nav-page-text"><span class="chapter-title">Worked Examples</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->

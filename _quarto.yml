@@ -21,6 +21,7 @@ book:
     - 08-debugging.qmd
     - 09-cpp11-rcpp.qmd
     - 10-worked-examples.qmd
+    - 11-compiler-optimization.qmd
 
 bibliography: references.bib
 

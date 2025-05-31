@@ -1,4 +1,4 @@
-# Differences between cpp11 and Rcpp
+# Compiler optimization
 
 ## Motivation
 

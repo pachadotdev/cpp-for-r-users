@@ -662,41 +662,41 @@
   {
     "objectID": "09-cpp11-rcpp.html",
     "href": "09-cpp11-rcpp.html",
-    "title": "Differences between cpp11 and Rcpp",
+    "title": "Compiler optimization",
     "section": "",
     "text": "Motivation\nVaughan, Hester, and Francois (2024) already provides some details. Here I will expand on the differences between cpp11 and Rcpp.",
     "crumbs": [
-      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Differences between cpp11 and Rcpp</span>"
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Compiler optimization</span>"
     ]
   },
   {
     "objectID": "09-cpp11-rcpp.html#read-and-write",
     "href": "09-cpp11-rcpp.html#read-and-write",
-    "title": "Differences between cpp11 and Rcpp",
+    "title": "Compiler optimization",
     "section": "Read and write",
     "text": "Read and write\nIn cpp11, when a variable is declared, it is read-only by default. This is different from Rcpp, where variables are read-write by default.\nThis code will not compile in cpp11:\n[[cpp11::register]] integers square_coordinates_(integers x) {\n  integers out = x;\n  for (int i = 0; i &lt; x.size(); ++i) {\n    out[i] = x[i] * x[i];\n  }\n  return out;\n}\nThe error message is:\ncode.cpp:515:10: error: lvalue required as left operand of assignment\n  515 |     out[i] = x[i] * x[i];\nTo fix this, you need to explicitly declare the variable as writable:\n[[cpp11::register]] integers square_coordinates_(integers x) {\n  writable::integers out = x;\n  for (int i = 0; i &lt; x.size(); ++i) {\n    out[i] = x[i] * x[i];\n  }\n  return out;\n}\nThe arguments are also read-only by default in cpp11, unless you declare them as writable, as in the following example:\n[[cpp11::register]] integers square_coordinates2_(writable::integers x) {\n  for (int i = 0; i &lt; x.size(); ++i) {\n    x[i] = x[i] * x[i];\n  }\n  return x;\n}",
     "crumbs": [
-      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Differences between cpp11 and Rcpp</span>"
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Compiler optimization</span>"
     ]
   },
   {
     "objectID": "09-cpp11-rcpp.html#external-pointers",
     "href": "09-cpp11-rcpp.html#external-pointers",
-    "title": "Differences between cpp11 and Rcpp",
+    "title": "Compiler optimization",
     "section": "External pointers",
     "text": "External pointers\nIn cpp11, you can use external_pointer. In Rcpp, you can use XPtr to create external pointers. These have a quite different syntax, and cpp11 does not provide an attr method for external pointers.\nFor example, the cpp11tesseract package defines:\ntypedef cpp11::external_pointer&lt;tesseract::TessBaseAPI, tess_finalizer&gt; TessPtr;\nThen TessPtr is called with:\nTessPtr ptr(api);\nreturn ptr;\nAs a result, the R equivalent that the OCR C++ function verifies that the engine is such that the following is true:\nstopifnot(inherits(engine, \"externalptr\"))\nThe equivalent tesseract package, that uses Rcpp, defines:\ntypedef Rcpp::XPtr&lt;tesseract::TessBaseAPI, Rcpp::PreserveStorage, tess_finalizer, true&gt; TessPtr;\nThen TessPtr is called with:\nTessPtr ptr(api);\nptr.attr(\"class\") = Rcpp::CharacterVector::create(\"tesseract\");\nreturn ptr;\nSimilarly, the Rcpp version checks the engine with:\nstopifnot(inherits(engine, \"tesseract\"))",
     "crumbs": [
-      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Differences between cpp11 and Rcpp</span>"
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Compiler optimization</span>"
     ]
   },
   {
     "objectID": "09-cpp11-rcpp.html#references",
     "href": "09-cpp11-rcpp.html#references",
-    "title": "Differences between cpp11 and Rcpp",
+    "title": "Compiler optimization",
     "section": "References",
     "text": "References\n\n\n\n\nVaughan, Davis, Jim Hester, and Roman Francois. 2024. “Get Started with Cpp11.” https://cpp11.r-lib.org/articles/cpp11.html#intro.",
     "crumbs": [
-      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Differences between cpp11 and Rcpp</span>"
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Compiler optimization</span>"
     ]
   },
   {
@@ -737,6 +737,46 @@
     "text": "References\n\n\n\n\nBerkelaar, Michel, and Gabor Csardi. 2023. lpSolve: Interface to ’Lp_solve’ v. 5.5 to Solve Linear/Integer Programs. https://CRAN.R-project.org/package=lpSolve.\n\n\nDrury, Matthew. 2016. “A Deep Dive Into How R Fits a Linear Model.” http://madrury.github.io/jekyll/update/statistics/2016/07/20/lm-in-R.html.\n\n\n“Enable OpenMP on macOS For Building Scikit-Learn - OpenBox Documentation.” n.d. Accessed October 19, 2024. https://open-box.readthedocs.io/en/latest/installation/openmp_macos.html.\n\n\nPadgham, Mark. 2022. “Debugging in R with a Single Command.” https://mpadge.github.io/blog/blog012.html.\n\n\nVaughan, Davis. 2019. “Debugging an R Package with C++ – Davis Vaughan.” https://blog.davisvaughan.com/posts/2019-04-05-debug-r-package-with-cpp/.\n\n\nVaughan, Davis, Jim Hester, and Roman Francois. 2024. “Get Started with Cpp11.” https://cpp11.r-lib.org/articles/cpp11.html#intro.\n\n\nWickham, Hadley, and Jenny Bryan. 2023. “R Packages (2e).” https://r-pkgs.org/.",
     "crumbs": [
       "<span class='chapter-number'>11</span>  <span class='chapter-title'>Debugging R Packages</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#additional-resources",
+    "href": "index.html#additional-resources",
+    "title": "C++ for R Users",
+    "section": "Additional resources",
+    "text": "Additional resources\nCheck my ECE 244 Class Notes. These notes cover a general approach to C++ programming covered in ECE244 at the University of Toronto.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Motivation</span>"
+    ]
+  },
+  {
+    "objectID": "11-compiler-optimization.html",
+    "href": "11-compiler-optimization.html",
+    "title": "Compiler optimization",
+    "section": "",
+    "text": "Motivation\nR uses default GCC/Clang compiler optimizations, which can limit the performance of C++ code.",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Compiler optimization</span>"
+    ]
+  },
+  {
+    "objectID": "11-compiler-optimization.html#user-wide-makevars",
+    "href": "11-compiler-optimization.html#user-wide-makevars",
+    "title": "Compiler optimization",
+    "section": "User-wide Makevars",
+    "text": "User-wide Makevars\nThe following Makevars example, which should be in ~/.R/Makevars, SETS the optimization level to -O3 for all C++ code compiled by R and uses additional flags to enable more aggressive optimizations that can be set at setup level but not package level (or CRAN will reject the package):\n# Override R's optimization level\nCXXFLAGS = -g -O3 -march=native\nCXX11FLAGS = -g -O3 -march=native\nCXX14FLAGS = -g -O3 -march=native\nCXX17FLAGS = -g -O3 -march=native\n\n# Additional optimizations\nCXXFLAGS += -funroll-loops -ftree-vectorize -fprefetch-loop-arrays\nCXXFLAGS += -fomit-frame-pointer -fstrict-aliasing\n\n# Link-time optimization\nCXXFLAGS += -flto=auto\nLDFLAGS += -flto=auto",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Compiler optimization</span>"
+    ]
+  },
+  {
+    "objectID": "11-compiler-optimization.html#anticonf-scripts",
+    "href": "11-compiler-optimization.html#anticonf-scripts",
+    "title": "Compiler optimization",
+    "section": "Anticonf scripts",
+    "text": "Anticonf scripts\nThe idea of an “anticonf” configure script is to provide a tailored Makevars file having in mind that a package will be run on different systems. The anticonf name comes from the fact that it is not a standard configure script created with tools such as GNU Autoconf, but rather a templated script that generates a Makevars by detecting the system and compiler settings (e.g., number of cores, optimization flags, etc.).\nThe capybara package has the following Makevars.in file:\nCXX_STD ?= CXX11 CXX14 CXX17\nPKG_CXXFLAGS = -DARMA_NO_DEBUG -DARMA_USE_BLAS -DARMA_USE_LAPACK -DCAPYBARA_NCORES=@ncores@ $(SHLIB_OPENMP_CXXFLAGS) @SAFE_OPTFLAGS@\nPKG_LIBS = $(SHLIB_OPENMP_CXXFLAGS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)\nThis file is a template for the Makevars file. The @ncores@ and @SAFE_OPTFLAGS@ are replaced by the configure script, which is run when the package is installed.\nCapybara’s configure script is as follows:\n# Anticonf script by Pacha (2025)\n\nPKG_CONFIG_NAME=\"capybara\"\n\n# Get R configuration\nCXX=$(${R_HOME}/bin/R CMD config CXX)\nCXXFLAGS=$(${R_HOME}/bin/R CMD config CXXFLAGS)\n\n# Function to test compiler flag\ntest_flag() {\n  echo 'int main(){return 0;}' &gt; conftest.cpp\n  if $CXX $CXXFLAGS $1 conftest.cpp -o conftest &gt;/dev/null 2&gt;&1; then\n    rm -f conftest conftest.cpp\n    return 0\n  else\n    rm -f conftest conftest.cpp\n    return 1\n  fi\n}\n\n# For CRAN, we can't override -O2, but we can add other safe optimizations\nSAFE_OPTFLAGS=\"\"\n\n# Test portable optimization flags that don't change the -O level\nPORTABLE_OPTS=\"-funroll-loops -ftree-vectorize\"\nfor opt in $PORTABLE_OPTS; do\n  if test_flag \"$opt\"; then\n    SAFE_OPTFLAGS=\"$SAFE_OPTFLAGS $opt\"\n  fi\ndone\n\nif [ -n \"$SAFE_OPTFLAGS\" ]; then\n  echo \"Additional optimizations:$SAFE_OPTFLAGS\"\nfi\n\n# Detect number of cores\nif [ -n \"$CAPYBARA_NCORES\" ]; then\n  num_cores=\"$CAPYBARA_NCORES\"\nelse\n  if [ -f /proc/cpuinfo ]; then\n    num_cores=$(grep -c \"^processor\" /proc/cpuinfo 2&gt;/dev/null || echo 1)\n  elif [ \"$(uname)\" = \"Darwin\" ]; then\n    num_cores=$(sysctl -n hw.ncpu 2&gt;/dev/null || echo 1)\n  else\n    num_cores=1\n  fi\n  \n  if [ \"$num_cores\" -gt 2 ]; then\n    num_cores=$((num_cores - 1))\n  fi\nfi\n\necho \"Default thread count: $num_cores\"\n\n# Create Makevars from template\necho \"Creating src/Makevars\"\nsed -e \"s|@ncores@|${num_cores}|g\" \\\n    -e \"s|@SAFE_OPTFLAGS@|${SAFE_OPTFLAGS}|g\" \\\n    src/Makevars.in &gt; src/Makevars\n\necho \"Configuration complete\"\necho \"\"\necho \"NOTE: This build will use R's default -O2 optimization level for CRAN compliance.\"\necho \"For maximum performance, see inst/Makevars.user.example\"\n\nexit 0\nThis script detects the number of cores available on the system and sets the CAPYBARA_NCORES variable accordingly. It also tests for safe optimization flags that can be added to the Makevars file without changing the default -O2 optimization level used by R. It also serves the goal of testing that a simple file can be compiled.",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Compiler optimization</span>"
     ]
   }
 ]
