@@ -778,5 +778,15 @@
     "crumbs": [
       "<span class='chapter-number'>12</span>  <span class='chapter-title'>Compiler optimization</span>"
     ]
+  },
+  {
+    "objectID": "index.html#shameless-self-promotion",
+    "href": "index.html#shameless-self-promotion",
+    "title": "C++ for R Users",
+    "section": "Shameless self-promotion",
+    "text": "Shameless self-promotion\nIf these notes helped you, please consider supporting my work by buying me a coffee. I see myself as a machine for turning coffee into code.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Motivation</span>"
+    ]
   }
 ]

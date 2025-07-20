@@ -22,6 +22,7 @@ book:
     - 09-cpp11-rcpp.qmd
     - 10-worked-examples.qmd
     - 11-compiler-optimization.qmd
+    - 12-linear-algebra.qmd
 
 bibliography: references.bib
 

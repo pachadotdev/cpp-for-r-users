@@ -6,6 +6,12 @@ to check multiple sources and spend hours looking for online resources.
 In particular, these notes follow the clas ECE244 (Programming Fundamentals) at
 the University of Toronto taught by Professor Salma Emara.
 
+## Shameless self-promotion
+
+If these notes helped you, please consider supporting my work by
+[buying me a coffee](https://buymeacoffee.com/pacha). I see myself as a machine
+for turning coffee into code.
+
 ## Honest Disclaimer
 
 These notes are a summary of what worked after hours of fails for my future
